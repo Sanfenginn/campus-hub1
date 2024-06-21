@@ -19,8 +19,7 @@ const createNewErrors = (description, statusCode, type, data = null) => {
     error.fileName = "Unknown";
   }
 
-  console.log("new error: ", error.fileName);
-  console.log("error.stack: ", error.stack);
+  console.log("error ininin :", error);
 
   return error;
 };

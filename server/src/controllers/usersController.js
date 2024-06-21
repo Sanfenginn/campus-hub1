@@ -29,7 +29,7 @@ const deleteUserById = async (req, res, next) => {
 
     if (!deletedUser) {
       const err = createNewErrors("User not found", 404, "notFound");
-      next(err);
+      return next(err);
     }
 
     res.formatResponse(204, deletedUser);
@@ -54,9 +54,11 @@ const updateUserById = async (req, res, next) => {
       { new: true }
     ).exec();
 
+    console.log("updatedUser:", updatedUser);
+
     if (!updatedUser) {
       const err = createNewErrors("User not found", 404, "notFound");
-      next(err);
+      return next(err);
     }
 
     res.formatResponse(200, updatedUser);
@@ -71,7 +73,7 @@ const getAllUsers = async (req, res, next) => {
 
     if (allUsers.length === 0) {
       const err = createNewErrors("No users found", 404, "notFound");
-      next(err);
+      return next(err);
     }
 
     res.formatResponse(200, allUsers);
@@ -87,7 +89,7 @@ const getUserById = async (req, res, next) => {
 
     if (!user) {
       const err = createNewErrors("User not found", 404, "notFound");
-      next(err);
+      return next(err);
     }
 
     res.formatResponse(200, user);

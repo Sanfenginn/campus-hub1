@@ -1,6 +1,7 @@
 const createNewErrors = require("../utils/createNewErrors");
 const StudentModel = require("../models/studentModel");
-const mongoose = require("mongoose");
+const StudentClassModel = require("../models/studentClassModel");
+const checkResource = require("../utils/checkResource");
 
 //exec()方法表示 query 构造完成，执行查询,添加的话，不需要exec()方法
 
@@ -46,7 +47,18 @@ const getStudentById = async (req, res, next) => {
 
   try {
     const student = await StudentModel.findById(id).exec();
-    console.log("student: ", student);
+
+    const populatedStudent = await StudentModel.findById(id)
+      .populate({
+        path: "studentClass",
+        select: "className -_id",
+        populate: {
+          path: "students.studentId",
+          select: "name age contact -_id", // 指定要返回的字段
+        },
+      })
+      .exec();
+
     //如果不存在Mongoose 会返回 null
     if (!student) {
       const err = createNewErrors("Student not found", 404, "notFound");
@@ -127,6 +139,7 @@ const updateStudent = async (req, res, next) => {
   //如果某个数据没有传，Mongoose 会自动忽略，不会覆盖,只会更新传入的数据
   //不加{new: true}选项，返回的是更新前的数据，加了选项，返回的是更新后的数据
 };
+
 const deleteStudent = async (req, res, next) => {
   const { id } = req.params;
 
@@ -139,11 +152,76 @@ const deleteStudent = async (req, res, next) => {
       return next(err);
     }
 
+    await deleteStudent.remove();
+
+    // await StudentClassModel.updateMany(
+    //   { "students.studentId": deletedStudent._id },
+    //   { $pull: { students: deletedStudent._id } }
+    // );
+
     res.formatResponse(204);
   } catch (error) {}
 };
 //成功时：findByIdAndDelete 返回删除的文档对象。deleteOne 和 deleteMany 返回包含删除计数的对象。
 //找不到文档时：findByIdAndDelete 返回 null。
+
+const addStudentToClass = async (req, res, next) => {
+  //获取学生id和班级id
+  //查找课程和学生，检查是否存在
+  //直接添加，如果已经存在，返回错误，如果不存在，添加（可以检查关系是否存在）
+  //保存到数据库，因为只是Mongoose 文档，还没有保存到数据库
+  //返回添加的学生文档对象
+  try {
+    const { studentId, classId } = req.params;
+    const student = await StudentModel.findById(studentId).exec();
+    const studentClass = await StudentClassModel.findById(classId).exec();
+
+    checkResource(student, "Student not found", 404, "notFound", next);
+    checkResource(studentClass, "Class not found", 404, "notFound", next);
+
+    student.studentClass = classId; //只是在内存中添加了一个关系，还没有保存到数据库
+    //只是在内存中添加了一个关系，还没有保存到数据库
+    await StudentClassModel.findByIdAndUpdate(
+      classId,
+      { $addToSet: { students: studentId } },
+      { new: true, useFindAndModify: false }
+    );
+
+    await student.save();
+    await studentClass.save();
+    //隐患：如果保存student成功，保存studentClass失败，会导致数据不一致
+    //解决方案：使用事务，保证两个操作要么都成功，要么都失败
+
+    //返回所有学生的id数组
+    res.formatResponse(201);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const removeStudentFromClass = async (req, res, next) => {
+  try {
+    const { studentId, classId } = req.params;
+    const student = await StudentModel.findById(studentId).exec();
+    const studentClass = await StudentClassModel.findById(classId).exec();
+
+    console.log("student: ", student);
+    console.log("studentClass: ", student);
+
+    checkResource(student, "Student not found", 404, "notFound", next);
+    checkResource(studentClass, "Class not found", 404, "notFound", next);
+
+    delete student.studentClass;
+    studentClass.students.pull(studentId);
+
+    await student.save();
+    await studentClass.save();
+
+    res.formatResponse(204);
+  } catch (err) {
+    next(err);
+  }
+};
 
 module.exports = {
   getAllStudents,
@@ -151,4 +229,6 @@ module.exports = {
   addStudent,
   updateStudent,
   deleteStudent,
+  addStudentToClass,
+  removeStudentFromClass,
 };
