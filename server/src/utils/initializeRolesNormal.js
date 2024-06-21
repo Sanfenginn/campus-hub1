@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Role = require("../models/roleModel");
 const Permission = require("../models/permissionModel");
 const config = require("../config");
+const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
 async function seedRolesAndPermissions() {
   try {
@@ -13,6 +15,23 @@ async function seedRolesAndPermissions() {
     });
 
     console.log("Connected to MongoDB");
+
+    const initialPassword = "12345";
+    const hashedPassword = await bcrypt.hash(initialPassword, 10);
+
+    await User.insertOne({
+      name: { firstName: "Admin", lastName: "User" },
+      account: "admin",
+      password: hashedPassword,
+      role: ObjectId("66747dabeb6c29ccfaf807ba"),
+      contact: { email: "admin@example.com", phone: "+61400000000" },
+      address: {
+        road: "Admin Road",
+        city: "Admin City",
+        state: "Admin State",
+        postalCode: "0000",
+      },
+    });
 
     // 假设已经插入权限到 Permission 集合，并获取它们的 _id
     const permissions = [

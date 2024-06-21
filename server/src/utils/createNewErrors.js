@@ -5,6 +5,7 @@ const createNewErrors = (description, statusCode, type, data = null) => {
   error.statusCode = statusCode;
   error.data = data;
   error.errorType = type;
+  error.stack = error.stack || "No stack trace available";
 
   // 为了获取文件名，我们需要解析堆栈信息
   const stackLines = error.stack.split("\n");
@@ -17,6 +18,9 @@ const createNewErrors = (description, statusCode, type, data = null) => {
   } else {
     error.fileName = "Unknown";
   }
+
+  console.log("new error: ", error.fileName);
+  console.log("error.stack: ", error.stack);
 
   return error;
 };

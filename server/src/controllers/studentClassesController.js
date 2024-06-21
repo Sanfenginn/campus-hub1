@@ -42,8 +42,8 @@ const updateStudentClass = async (req, res, next) => {
       {
         $set: studentClassData,
       },
-      { new: true }.exec()
-    );
+      { new: true }
+    ).exec();
 
     if (!updatedStudentClass) {
       const err = createNewErrors("Student Class not found", 404, "notFound");

@@ -49,6 +49,7 @@ const updateTeacherById = async (req, res, next) => {
     next(err);
   }
 };
+
 const getAllTeachers = async (req, res, next) => {
   try {
     const allTeachers = await TeacherModel.find().exec();

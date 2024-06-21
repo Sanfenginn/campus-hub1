@@ -6,6 +6,7 @@ const coursesRouter = require("./coursesRouter");
 const studentClassesRouter = require("./studentClassesRouter");
 const teachersRouter = require("./teachersRouter");
 const usersRouter = require("./usersRouter");
+const { validationResult } = require("express-validator");
 
 router.use("/students", studentsRouter);
 router.use("/courses", coursesRouter);

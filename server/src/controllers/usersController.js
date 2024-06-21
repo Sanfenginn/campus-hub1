@@ -6,8 +6,6 @@ const addUser = async (req, res, next) => {
   const users = req.body;
 
   try {
-    // const newUser = await UserModel.insertMany(users);
-    // res.formatResponse(201, newUser);
     const usersWithHashedPasswords = await Promise.all(
       users.map(async (user) => {
         const hashedPassword = await bcrypt.hash(user.password, 10);

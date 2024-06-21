@@ -1,5 +1,6 @@
 const createNewErrors = require("../utils/createNewErrors");
 const StudentModel = require("../models/studentModel");
+const mongoose = require("mongoose");
 
 //exec()方法表示 query 构造完成，执行查询,添加的话，不需要exec()方法
 
@@ -38,9 +39,14 @@ const getAllStudents = async (req, res, next) => {
 const getStudentById = async (req, res, next) => {
   const { id } = req.params;
 
+  // 检查 id 是否为有效的 ObjectId
+  // if (!mongoose.Types.ObjectId.isValid(id)) {
+  //   return res.status(400).send("Invalid ID format");
+  // }
+
   try {
     const student = await StudentModel.findById(id).exec();
-
+    console.log("student: ", student);
     //如果不存在Mongoose 会返回 null
     if (!student) {
       const err = createNewErrors("Student not found", 404, "notFound");

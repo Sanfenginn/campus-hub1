@@ -4,6 +4,7 @@ const config = require("../config/index");
 
 const errorHandler = (err, req, res, next) => {
   console.log("err:", err);
+  console.log("error.stack1: ", err.stack);
 
   const defaultError = {
     statusCode: 500,
@@ -28,23 +29,15 @@ const errorHandler = (err, req, res, next) => {
       message = err.response?.statusText || defaultError.message;
     }
 
-    console.log("Error Type: ", err.errorType);
-    console.log("Error Status Code: ", statusCode);
-    console.log("Error Message: ", message);
-
-    // res.formatResponse(
-    //   statusCode,
-    //   {},
-    //   {
-    //     data: err.errorType === "validation" && { data },
-    //     stack: config.NODE_ENV === "development" && { stack },
-    //   }
-    // );
+    // console.log("Error Type: ", err.errorType);
+    // console.log("Error Status Code: ", statusCode);
+    // console.log("Error Message: ", message);
 
     res.status(statusCode).json({
       message,
       statusCode,
       ...(err.errorType === "validation" ? { data } : {}),
+      stack: process.env.NODE_ENV === "production" ? undefined : stack,
     });
 
     logger.error(`Error fetching news: ${err.message}`, {

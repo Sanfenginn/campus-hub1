@@ -8,16 +8,21 @@ const {
   getCourseById,
 } = require("../controllers/coursesController");
 const { authenticate, authorize } = require("../middlewares/authMiddleware");
+const {
+  validateCourse,
+  checkId,
+} = require("../middlewares/validationMiddleware");
 
 coursesRouter.get("/", getAllCourses);
-coursesRouter.get("/:id", getCourseById);
+coursesRouter.get("/:id", checkId, getCourseById);
 coursesRouter.post(
   "/",
-  authenticate,
-  authorize("manage_courses_add"),
+  // authenticate,
+  // authorize("manage_courses_add"),
+  validateCourse,
   addCourse
 );
-coursesRouter.put("/:id", updateCourseById);
-coursesRouter.delete("/:id", deleteCourseById);
+coursesRouter.put("/:id", checkId, validateCourse, updateCourseById);
+coursesRouter.delete("/:id", checkId, deleteCourseById);
 
 module.exports = coursesRouter;

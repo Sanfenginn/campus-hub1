@@ -7,11 +7,15 @@ const {
   getAllUsers,
   getUserById,
 } = require("../controllers/usersController");
+const {
+  validateUser,
+  checkId,
+} = require("../middlewares/validationMiddleware");
 
 usersRouter.get("/", getAllUsers);
-usersRouter.get("/:id", getUserById);
-usersRouter.post("/", addUser);
-usersRouter.put("/:id", updateUserById);
-usersRouter.delete("/:id", deleteUserById);
+usersRouter.get("/:id", checkId, getUserById);
+usersRouter.post("/", validateUser, addUser);
+usersRouter.put("/:id", checkId, validateUser, updateUserById);
+usersRouter.delete("/:id", checkId, deleteUserById);
 
 module.exports = usersRouter;

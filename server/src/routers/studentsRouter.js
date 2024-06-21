@@ -7,11 +7,15 @@ const {
   updateStudent,
   deleteStudent,
 } = require("../controllers/studentsController");
+const {
+  validateStudent,
+  checkId,
+} = require("../middlewares/validationMiddleware");
 
-studentsRouter.post("/", addStudent);
-studentsRouter.delete("/:id", deleteStudent);
-studentsRouter.put("/:id", updateStudent);
+studentsRouter.post("/", validateStudent, addStudent);
+studentsRouter.delete("/:id", checkId, deleteStudent);
+studentsRouter.put("/:id", checkId, validateStudent, updateStudent);
 studentsRouter.get("/", getAllStudents);
-studentsRouter.get("/:id", getStudentById);
+studentsRouter.get("/:id", checkId, getStudentById);
 
 module.exports = studentsRouter;
