@@ -1,5 +1,6 @@
 const StudentClassModel = require("../models/studentClassModel");
 const createNewErrors = require("../utils/createNewErrors");
+const StudentModel = require("../models/studentModel");
 
 const addStudentClass = async (req, res, next) => {
   const studentClasses = req.body;
@@ -26,6 +27,10 @@ const deleteStudentClass = async (req, res, next) => {
       return next(err);
     }
 
+    await StudentModel.updateMany(
+      { studentClass: deletedStudentClass._id },
+      { $unset: { studentClass: "" } }
+    );
     res.formatResponse(204);
   } catch (err) {
     next(err);

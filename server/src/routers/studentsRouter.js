@@ -6,6 +6,8 @@ const {
   addStudent,
   updateStudent,
   deleteStudent,
+  addStudentToClass,
+  removeStudentFromClass,
 } = require("../controllers/studentsController");
 const {
   validateStudent,
@@ -17,5 +19,7 @@ studentsRouter.delete("/:id", checkId, deleteStudent);
 studentsRouter.put("/:id", checkId, validateStudent, updateStudent);
 studentsRouter.get("/", getAllStudents);
 studentsRouter.get("/:id", checkId, getStudentById);
+studentsRouter.post("/:studentId/class/:classId", addStudentToClass);
+studentsRouter.delete("/:studentId/class/:classId", removeStudentFromClass);
 
 module.exports = studentsRouter;

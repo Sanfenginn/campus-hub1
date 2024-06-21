@@ -5,19 +5,23 @@ const courseSchema = new Schema({
     type: String,
     required: true,
     notEmpty: true,
+    _id: false,
   },
   description: {
     type: String,
     requires: true,
+    _id: false,
   },
   teacher: {
     type: Schema.Types.ObjectId,
+    _id: false,
     // requires: true,
   },
   classes: [
     {
       type: Schema.Types.ObjectId,
       ref: "Class",
+      _id: false,
     },
   ],
 });
