@@ -1,6 +1,7 @@
 const StudentClassModel = require("../models/studentClassModel");
 const createNewErrors = require("../utils/createNewErrors");
 const StudentModel = require("../models/studentModel");
+const checkResource = require("../utils/checkResource");
 
 const addStudentClass = async (req, res, next) => {
   const studentClasses = req.body;
@@ -18,19 +19,26 @@ const deleteStudentClass = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const deletedStudentClass = await StudentClassModel.findByIdAndDelete(
-      id
-    ).exec();
+    // const deletedStudentClass = await StudentClassModel.findByIdAndDelete(
+    //   id
+    // ).exec();
 
-    if (!deletedStudentClass) {
-      const err = createNewErrors("Student Class not found", 404, "notFound");
-      return next(err);
-    }
+    const deletedStudentClass = await StudentClassModel.findById(id).exec();
 
-    await StudentModel.updateMany(
-      { studentClass: deletedStudentClass._id },
-      { $unset: { studentClass: "" } }
+    checkResource(
+      deletedStudentClass,
+      "Student Class not found",
+      404,
+      "notFound",
+      next
     );
+
+    await deletedStudentClass.remove();
+
+    // await StudentModel.updateMany(
+    //   { studentClass: deletedStudentClass._id },
+    //   { $unset: { studentClass: "" } }
+    // );
     res.formatResponse(204);
   } catch (err) {
     next(err);
@@ -50,16 +58,20 @@ const updateStudentClass = async (req, res, next) => {
       { new: true }
     ).exec();
 
-    if (!updatedStudentClass) {
-      const err = createNewErrors("Student Class not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(
+      updatedStudentClass,
+      "Student Class not found",
+      404,
+      "notFound",
+      next
+    );
 
     res.formatResponse(200, updatedStudentClass);
   } catch (err) {
     next(err);
   }
 };
+
 const getAllStudentClasses = async (req, res, next) => {
   try {
     const allStudentClasses = await StudentClassModel.find().exec();
@@ -74,16 +86,20 @@ const getAllStudentClasses = async (req, res, next) => {
     next(err);
   }
 };
+
 const getStudentClassById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
     const studentClass = await StudentClassModel.findById(id);
 
-    if (!studentClass) {
-      const err = createNewErrors("Student Class not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(
+      studentClass,
+      "Student Class not found",
+      404,
+      "notFound",
+      next
+    );
 
     res.formatResponse(200, studentClass);
   } catch (err) {

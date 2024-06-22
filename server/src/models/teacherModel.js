@@ -63,4 +63,15 @@ const teacherSchema = new Schema({
   ],
 });
 
+// 在删除 Teacher 文档之前，更新所有关联的 StudentClass 和 Course 文档
+teacherSchema.pre("remove", async function (next) {
+  // const StudentClassModel = require("./studentClassModel"); // 引入 StudentClass 模型
+  const CourseModel = require("./courseModel");
+  await CourseModel.updateMany(
+    { teacher: this._id },
+    { $unset: { teacher: "" } } // 将 studentClass 字段置空
+  );
+  next();
+});
+
 module.exports = model("Teacher", teacherSchema);
