@@ -6,7 +6,6 @@ const checkResource = require("../utils/checkResource");
 //exec()方法表示 query 构造完成，执行查询,添加的话，不需要exec()方法
 
 const getAllStudents = async (req, res, next) => {
-  //TODO: 数据验证
   const page = parseInt(req.query.page) || 1;
   //如果没有传入page参数，默认为1
   //那前段每次都手动改page参数，
@@ -60,10 +59,7 @@ const getStudentById = async (req, res, next) => {
       .exec();
 
     //如果不存在Mongoose 会返回 null
-    if (!student) {
-      const err = createNewErrors("Student not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(student, "Student not found", 404, "notFound", next);
 
     res.formatResponse(200, student);
   } catch (err) {}
@@ -122,10 +118,7 @@ const updateStudent = async (req, res, next) => {
     //这个方案前端请求体必须包含所有字段，否则不会更新
 
     //当使用指定的 _id 查找文档但未找到时，会返回 null。
-    if (!updatedStudent) {
-      const err = createNewErrors("Student not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(updatedStudent, "Student not found", 404, "notFound", next);
 
     res.formatResponse(200, updatedStudent);
   } catch (err) {
@@ -144,13 +137,10 @@ const deleteStudent = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const deletedStudent = await StudentModel.findByIdAndDelete(id).exec();
+    const deletedStudent = await StudentModel.findById(id).exec();
 
     //当使用指定的 _id 查找文档但未找到时，会返回 null。如果找到了文档并成功删除，该方法会返回删除的文档对象。
-    if (!deletedStudent) {
-      const err = createNewErrors("Student not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(deletedStudent, "Student not found", 404, "notFound", next);
 
     await deleteStudent.remove();
 
@@ -204,9 +194,6 @@ const removeStudentFromClass = async (req, res, next) => {
     const { studentId, classId } = req.params;
     const student = await StudentModel.findById(studentId).exec();
     const studentClass = await StudentClassModel.findById(classId).exec();
-
-    console.log("student: ", student);
-    console.log("studentClass: ", student);
 
     checkResource(student, "Student not found", 404, "notFound", next);
     checkResource(studentClass, "Class not found", 404, "notFound", next);

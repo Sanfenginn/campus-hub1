@@ -1,6 +1,5 @@
 const AutoIncrement = require("mongoose-sequence")(require("mongoose"));
 const { Schema, model } = require("mongoose");
-const StudentClassModel = require("./studentClassModel");
 
 // 定义联系方式子文档 Schema
 const contactSchema = new Schema({
@@ -72,7 +71,7 @@ const studentSchema = new Schema({
 
 // 在删除 Student 文档之前，更新所有关联的 StudentClass 文档
 studentSchema.pre("remove", async function (next) {
-  const StudentClassModel = require("./studentModel"); // 引入 Student 模型
+  const StudentClassModel = require("./studentClassModel"); // 引入 Student 模型
   await StudentClassModel.updateMany(
     { students: this._id },
     { $pull: { students: this._id } } // 将 studentClass 字段置空

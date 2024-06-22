@@ -4,22 +4,24 @@ const UserModel = require("../models/userModel");
 const Role = require("../models/roleModel");
 const createNewErrors = require("../utils/createNewErrors");
 const config = require("../config");
+const checkResource = require("../utils/checkResource");
 
 const login = async (req, res, next) => {
   const { account, password } = req.body;
 
   try {
     const user = await UserModel.findOne({ account }).populate("role").exec();
-    if (!user) {
-      const err = createNewErrors("User not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(user, "User not found", 404, "notFound", next);
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      const err = createNewErrors("Incorrect password", 401, "unauthorized");
-      return next(err);
-    }
+
+    checkResource(
+      !isPasswordCorrect,
+      "Incorrect password",
+      401,
+      "unauthorized",
+      next
+    );
 
     const token = jwt.sign(
       { userId: user._id, role: user.role.role },

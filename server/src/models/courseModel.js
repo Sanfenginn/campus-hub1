@@ -17,13 +17,24 @@ const courseSchema = new Schema({
     _id: false,
     // requires: true,
   },
-  classes: [
+  studentClasses: [
     {
       type: Schema.Types.ObjectId,
       ref: "Class",
       _id: false,
     },
   ],
+});
+
+// 在删除 Course 文档之前，更新所有关联的 StudentClass 文档
+courseSchema.pre("remove", async function (next) {
+  // const StudentClassModel = require("./studentClassModel"); // 引入 StudentClass 模型
+  const TeacherModel = require("./teacherModel");
+  await TeacherModel.updateMany(
+    { courses: this._id },
+    { $pull: { courses: this._id } } // 将 studentClass 字段置空
+  );
+  next();
 });
 
 //	1.	students: [...]：表示一个名为 students 的字段，这个字段是一个数组。

@@ -1,5 +1,6 @@
 const TeacherModel = require("../models/teacherModel");
 const createNewErrors = require("../utils/createNewErrors");
+const checkResource = require("../utils/checkResource");
 
 const addTeachers = async (req, res, next) => {
   const teachers = req.body;
@@ -11,16 +12,17 @@ const addTeachers = async (req, res, next) => {
     next(err);
   }
 };
+
 const deleteTeacherById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const deletedTeacher = await TeacherModel.findByIdAndDelete(id).exec();
+    // const deletedTeacher = await TeacherModel.findByIdAndDelete(id).exec();
+    const deletedTeacher = await TeacherModel.findById(id).exec();
 
-    if (!deletedTeacher) {
-      const err = createNewErrors("Teacher not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(deletedTeacher, "Teacher not found", 404, "notFound", next);
+
+    await deletedTeacher.remove();
 
     res.formatResponse(204);
   } catch (err) {
@@ -39,10 +41,7 @@ const updateTeacherById = async (req, res, next) => {
       { new: true }
     ).exec();
 
-    if (!updatedTeacher) {
-      const err = createNewErrors("Teacher not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(updatedTeacher, "Teacher not found", 404, "notFound", next);
 
     res.formatResponse(200, updatedTeacher);
   } catch (err) {
@@ -70,10 +69,7 @@ const getTeacherById = async (req, res, next) => {
   try {
     const teacher = await TeacherModel.findById(id).exec();
 
-    if (!teacher) {
-      const err = createNewErrors("Teacher not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(teacher, "Teacher not found", 404, "notFound", next);
 
     res.formatResponse(200, teacher);
   } catch (err) {
