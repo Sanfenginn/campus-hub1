@@ -13,12 +13,17 @@ const authenticate = (req, res, next) => {
 
   jwt.verify(token, config.JWT_SECRET, (err, decoded) => {
     if (err) {
-      const err = createNewErrors(
-        "Failed to authenticate token",
-        401,
-        "unauthorized"
-      );
-      return next(err);
+      if (err.name === "TokenExpiredError") {
+        const error = createNewErrors("Token expired", 401, "token_expired");
+        return next(error);
+      } else {
+        const error = createNewErrors(
+          "Failed to authenticate token",
+          401,
+          "unauthorized"
+        );
+        return next(error);
+      }
     }
     req.userId = decoded.userId;
     req.userRole = decoded.role;
