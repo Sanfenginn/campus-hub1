@@ -61,8 +61,29 @@ const updateUserById = async (req, res, next) => {
 };
 
 const getAllUsers = async (req, res, next) => {
+  const { condition, inputValue } = req.query;
+  console.log("condition", condition);
+  console.log("inputValue", inputValue);
+
   try {
-    const allUsers = await UserModel.find().exec();
+    const regex = new RegExp(`^${inputValue}$`, "i"); // 'i' 表示不区分大小写
+    // 构建查询对象
+    let query = { "name.firstName": { $ne: "Admin" } };
+    if (condition && inputValue) {
+      if (condition === "Name") {
+        query = {
+          $or: [{ "name.firstName": regex }, { "name.lastName": regex }],
+        };
+      } else {
+        query[condition.toLowerCase()] = inputValue;
+      }
+    }
+
+    console.log("query", query);
+
+    const allUsers = await UserModel.find(query)
+      .select("-password -role")
+      .exec();
 
     if (allUsers.length === 0) {
       const err = createNewErrors("No users found", 404, "notFound");
@@ -74,6 +95,7 @@ const getAllUsers = async (req, res, next) => {
     next(err);
   }
 };
+
 const getUserById = async (req, res, next) => {
   const { id } = req.params;
 

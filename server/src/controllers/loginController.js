@@ -11,12 +11,13 @@ const login = async (req, res, next) => {
 
   try {
     const user = await UserModel.findOne({ account }).populate("role").exec();
+
     checkResource(user, "User not found", 404, "notFound", next);
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     checkResource(
-      !isPasswordCorrect,
+      isPasswordCorrect,
       "Incorrect password",
       401,
       "unauthorized",
@@ -24,19 +25,27 @@ const login = async (req, res, next) => {
     );
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role.role },
+      { age: user.age, roleId: user.role._id },
       config.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    console.log("token", token);
+
     // 将 token 存储在 HttpOnly cookies 中
     res.cookie("token", token, {
       httpOnly: true,
+      // secure: false,
       secure: process.env.NODE_ENV === "production", // 在生产环境中使用 HTTPS
+      sameSite: "strict",
       maxAge: 3600000, // 1小时
     });
 
-    res.formatResponse(200, "Login successful");
+    res.formatResponse(200, "Login successful", {
+      userId: user._id,
+      userRole: user.role.role,
+      token: token,
+    });
   } catch (err) {
     next(err);
   }

@@ -4,8 +4,10 @@ const config = require("../config");
 const RoleModel = require("../models/roleModel");
 
 const authenticate = (req, res, next) => {
-  // const token = req.headers.authorization?.split(" ")[1];
-  const token = req.cookies.token;
+  const token = req.headers.authorization?.split(" ")[1];
+  // const token = req.cookies.token;
+  console.log("token", token);
+
   if (!token) {
     const err = createNewErrors("No token provided", 401, "unauthorized");
     return next(err);
@@ -13,12 +15,17 @@ const authenticate = (req, res, next) => {
 
   jwt.verify(token, config.JWT_SECRET, (err, decoded) => {
     if (err) {
-      const err = createNewErrors(
-        "Failed to authenticate token",
-        401,
-        "unauthorized"
-      );
-      return next(err);
+      if (err.name === "TokenExpiredError") {
+        const error = createNewErrors("Token expired", 401, "token_expired");
+        return next(error);
+      } else {
+        const error = createNewErrors(
+          "Failed to authenticate token",
+          401,
+          "unauthorized"
+        );
+        return next(error);
+      }
     }
     req.userId = decoded.userId;
     req.userRole = decoded.role;
