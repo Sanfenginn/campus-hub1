@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/userModel");
 const createNewErrors = require("../utils/createNewErrors");
+const checkResource = require("../utils/checkResource");
 
 const addUser = async (req, res, next) => {
   const users = req.body;
@@ -27,10 +28,7 @@ const deleteUserById = async (req, res, next) => {
   try {
     const deletedUser = await UserModel.findByIdAndDelete(id).exec();
 
-    if (!deletedUser) {
-      const err = createNewErrors("User not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(deletedUser, "User not found", 404, "notFound", next);
 
     res.formatResponse(204, deletedUser);
   } catch (err) {
@@ -54,12 +52,7 @@ const updateUserById = async (req, res, next) => {
       { new: true }
     ).exec();
 
-    console.log("updatedUser:", updatedUser);
-
-    if (!updatedUser) {
-      const err = createNewErrors("User not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(updatedUser, "User not found", 404, "notFound", next);
 
     res.formatResponse(200, updatedUser);
   } catch (err) {
@@ -87,10 +80,7 @@ const getUserById = async (req, res, next) => {
   try {
     const user = await UserModel.findById(id).exec();
 
-    if (!user) {
-      const err = createNewErrors("User not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(user, "User not found", 404, "notFound", next);
 
     res.formatResponse(200, user);
   } catch (err) {

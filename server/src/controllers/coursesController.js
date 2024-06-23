@@ -1,5 +1,6 @@
 const createNewErrors = require("../utils/createNewErrors");
 const CourseModel = require("../models/courseModel");
+const checkResource = require("../utils/checkResource");
 
 const addCourse = async (req, res, next) => {
   // const { name, description, teacher, classes } = req.body;
@@ -20,21 +21,23 @@ const addCourse = async (req, res, next) => {
     next(err);
   }
 };
+
 const deleteCourseById = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deletedCourse = await CourseModel.findByIdAndDelete(id).exec();
+    // const deletedCourse = await CourseModel.findByIdAndDelete(id).exec();
+    const deletedCourse = await CourseModel.findById(id).exec();
 
-    if (!deletedCourse) {
-      const err = createNewErrors("Course not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(deletedCourse, "Course not found", 404, "notFound", next);
+
+    await deletedCourse.remove();
 
     res.formatResponse(204);
   } catch (err) {
     next(err);
   }
 };
+
 const updateCourseById = async (req, res, next) => {
   const courseData = req.body;
   const { id } = req.params;
@@ -48,10 +51,8 @@ const updateCourseById = async (req, res, next) => {
       { new: true }
     ).exec();
 
-    if (!updatedCourse) {
-      const err = createNewErrors("Course not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(updatedCourse, "Course not found", 404, "notFound", next);
+
     res.formatResponse(200, updatedCourse);
   } catch (err) {
     next(err);
@@ -77,10 +78,7 @@ const getCourseById = async (req, res, next) => {
   try {
     const course = await CourseModel.findById(id).exec();
 
-    if (!course) {
-      const err = createNewErrors("Course not found", 404, "notFound");
-      return next(err);
-    }
+    checkResource(course, "Course not found", 404, "notFound", next);
 
     res.formatResponse(200, course);
   } catch (err) {
