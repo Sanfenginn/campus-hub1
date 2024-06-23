@@ -28,7 +28,14 @@ const LoginForm: React.FC = () => {
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("userRole", response.data.userRole);
       // 在登录成功后跳转到系统主界面
-      router.push("/users"); // 假设系统主界面的路径是 /dashboard
+      if (response.data.userRole === "admin") {
+        router.push("/users");
+      } else if (response.data.userRole === "teacher") {
+        router.push("/teachers");
+      } else if (response.data.userRole === "student") {
+        router.push("/students");
+      }
+
       console.log(response);
     } catch (err) {
       console.error(err);

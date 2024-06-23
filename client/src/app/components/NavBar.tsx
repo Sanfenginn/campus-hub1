@@ -35,8 +35,10 @@ const NavBar: React.FC = () => {
         { name: "courses", path: "/courses" },
         { name: "classes", path: "/classes" },
       ]);
-    } else if (userRole === "student" || userRole === "teacher") {
-      // setPages(["My Courses"]);
+    } else if (userRole === "student") {
+      setPages([{ name: "My Courses", path: "/students" }]);
+    } else if (userRole === "teacher") {
+      setPages([{ name: "My Courses", path: "/teachers" }]);
     }
   }, [userRole]);
 
@@ -76,6 +78,7 @@ const NavBar: React.FC = () => {
   };
 
   const handlePageClick = (pageName: string) => {
+    console.log("pageName: ", pageName);
     handleCloseNavMenu();
     if (pageName === "users") {
       router.push("/users");
@@ -86,6 +89,13 @@ const NavBar: React.FC = () => {
     } else if (pageName === "classes") {
       router.push("/classes");
       localStorage.setItem("currentPage", "classes");
+    } else if (pageName === "My Courses") {
+      if (userRole === "teacher") {
+        router.push("/teachers");
+      } else if (userRole === "student") {
+        router.push("/students");
+      }
+      localStorage.setItem("currentPage", "my-courses");
     }
   };
 

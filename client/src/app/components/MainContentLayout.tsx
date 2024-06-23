@@ -7,7 +7,7 @@ const MainContentLayout: React.FC = () => {
 
   return (
     <div className="border-2 border-black   flex flex-1">
-      <div> ddd</div>
+      <div>ddd</div>
     </div>
   );
 };

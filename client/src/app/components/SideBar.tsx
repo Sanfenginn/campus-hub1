@@ -10,6 +10,8 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { useEffect, useState } from "react";
+import { setSecondFunction } from "../redux/secondFunction";
+import { useDispatch } from "react-redux";
 
 type Option = {
   name: string;
@@ -18,13 +20,13 @@ type Option = {
 
 const SideBar: React.FC = () => {
   const [options, setOptions] = useState<Option[]>([]);
-  const [secondFunction, setSecondFunction] = useState<string>("");
+  const dispatch = useDispatch();
 
   const currentPage = localStorage.getItem("currentPage");
+  const userRole = localStorage.getItem("userRole");
 
   const handleClick = (secondFunction: string) => {
-    setSecondFunction(secondFunction);
-    localStorage.setItem("secondFunction", secondFunction);
+    dispatch(setSecondFunction(secondFunction));
   };
 
   useEffect(() => {
@@ -47,6 +49,8 @@ const SideBar: React.FC = () => {
         { name: "Class Search", path: "/classes/class-search" },
         { name: "Class Settings", path: "/classes/class-settings" },
       ]);
+    } else if (currentPage === "my-courses") {
+      setOptions([{ name: "My Courses", path: "/courses/my-courses " }]);
     }
   }, [currentPage]);
 
