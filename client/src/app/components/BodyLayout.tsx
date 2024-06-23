@@ -3,8 +3,11 @@ import { PropsWithChildren } from "react";
 import NavBar from "./NavBar";
 import MainContent from "./MainContent";
 import SideBar from "./SideBar";
+import { useState } from "react";
 
 const MainLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+  const [secondFunction, setSecondFunction] = useState<string>("");
+
   return (
     <div className="flex flex-col items-center min-h-screen">
       <NavBar />

@@ -1,57 +1,57 @@
 import dynamic from "next/dynamic";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, use } from "react";
+import { useEffect, useState } from "react";
 
 const UsersPage = dynamic(() => import("../components/UsersContent"));
 const CoursesPage = dynamic(() => import("../components/ CoursesContent"));
 const ClassesPage = dynamic(() => import("../components/ ClassesContent"));
 
+const DisplayAllUsers = dynamic(
+  () => import("../components/usersInterface/DisplayAllUsers")
+);
+const AddUser = dynamic(() => import("../components/usersInterface/AddUser"));
+
 // const MainContent: React.FC<{ page: string }> = ({ page }) => {
 const MainContent: React.FC = () => {
-  const secondFunction = localStorage.getItem("secondFunction");
+  const [secondFunction, setSecondFunction] = useState<string>("");
+
+  // const secondFunctionFromLocalStorage = localStorage.getItem("secondFunction");
+
+  useEffect(() => {
+    const secondFunctionFromLocalStorage =
+      localStorage.getItem("secondFunction");
+    setSecondFunction(secondFunctionFromLocalStorage || "");
+  }, []);
 
   console.log("secondFunction: ", secondFunction);
 
-  let ContentComponent;
+  // let ContentComponent;
 
   // console.log("page in main content: ", page);
 
-  // switch (page) {
-  //   case "users":
-  //     ContentComponent = UsersPage;
-  //     console.log("content component: ", ContentComponent);
-  //     break;
-  //   case "courses":
-  //     ContentComponent = CoursesPage;
-  //     break;
-  //   case "classes":
-  //     ContentComponent = ClassesPage;
-  //     break;
-  //   default:
-  //     ContentComponent = () => (
-  //       <div>Select a page from the navigation menu.</div>
-  //     );
-  // }
-
-  // switch (page) {
-  //   case "Users":
-  //     ContentComponent = UsersPage;
-  //     console.log("content component: ", ContentComponent);
-  //     break;
-  //   case "Courses":
-  //     ContentComponent = CoursesPage;
-  //     break;
-  //   case "Classes":
-  //     ContentComponent = ClassesPage;
-  //     break;
-  //   default:
-  //     ContentComponent = () => (
-  //       <div>Select a page from the navigation menu.</div>
-  //     );
-  // }
+  const ContentComponent = () => {
+    switch (secondFunction) {
+      case "/users/add-user":
+        localStorage.removeItem("secondFunction");
+        return <AddUser />;
+      case "/users":
+        localStorage.removeItem("secondFunction");
+        return <AddUser />;
+      // case "courses":
+      //   ContentComponent = CoursesPage;
+      //   break;
+      // case "classes":
+      //   ContentComponent = ClassesPage;
+      //   break;
+      default:
+        return <DisplayAllUsers />;
+    }
+  };
 
   return (
     <div className="border-2 border-yellow-500 h-full">
-      <h1>Main Content</h1>
+      {/* <h1>Main Content</h1> */}
+      <ContentComponent />
     </div>
   );
 };

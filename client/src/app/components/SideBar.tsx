@@ -18,11 +18,13 @@ type Option = {
 
 const SideBar: React.FC = () => {
   const [options, setOptions] = useState<Option[]>([]);
+  const [secondFunction, setSecondFunction] = useState<string>("");
 
   const currentPage = localStorage.getItem("currentPage");
 
   const handleClick = (secondFunction: string) => {
-    localStorage.setItem("secondFunction", `${secondFunction}`);
+    setSecondFunction(secondFunction);
+    localStorage.setItem("secondFunction", secondFunction);
   };
 
   useEffect(() => {
