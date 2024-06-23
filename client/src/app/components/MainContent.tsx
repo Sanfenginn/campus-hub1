@@ -44,7 +44,6 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="border-2 border-yellow-500 h-full">
-      {/* <h1>Main Content</h1> */}
       {userRole === "admin" && <AdminContentComponent />}
     </div>
   );

@@ -1,45 +1,23 @@
+import * as React from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import SaveIcon from "@mui/icons-material/Save";
-import SendIcon from "@mui/icons-material/Send";
-import React from "react";
+import Stack from "@mui/material/Stack";
 
 const SearchButton: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  function handleClick() {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleClick = () => {
     setLoading(true);
-  }
+    // 模拟加载过程
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
 
   return (
-    <div>
-      <FormControlLabel
-        sx={{
-          display: "block",
-        }}
-        control={
-          <Switch
-            checked={loading}
-            onChange={() => setLoading(!loading)}
-            name="loading"
-            color="primary"
-          />
-        }
-        label="Loading"
-      />
-
-      <Box sx={{ "& > button": { m: 1 } }}>
-        <LoadingButton
-          onClick={handleClick}
-          loading={loading}
-          loadingIndicator="Loading…"
-          variant="outlined"
-        >
-          <span>Fetch data</span>
-        </LoadingButton>
-      </Box>
-    </div>
+    <LoadingButton loading={loading} variant="outlined" onClick={handleClick}>
+      Submit
+    </LoadingButton>
   );
 };
 

@@ -1,20 +1,23 @@
 import InputBox from "./InputBox";
 import SelectBox from "./SelectBox";
 import { useState } from "react";
-import SearchButton from "./SearchButton";
+import UsersList from "./UsersList";
 
 const DisplayAllUsersLayout: React.FC = () => {
   const [condition, setCondition] = useState("");
 
   return (
-    <div className="flex ">
-      <SelectBox onChange={setCondition} />
-      <div className="ml-2   ">
-        <InputBox condition={condition} />
+    <div className="flex flex-col h-full">
+      <div className=" flex  items-center border-2 border-black">
+        <div className="">
+          <SelectBox onChange={setCondition} />
+        </div>
+        <div className="ml-2 h-full flex-grow ">
+          <InputBox condition={condition} />
+        </div>
       </div>
-      <SearchButton />
-      <div className="ml-2">
-        <SearchButton />
+      <div className=" flex-grow h-[500px] border-2 border-black ">
+        <UsersList />
       </div>
     </div>
   );

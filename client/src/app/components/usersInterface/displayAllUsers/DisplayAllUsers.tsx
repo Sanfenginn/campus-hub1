@@ -1,11 +1,7 @@
 import DisplayAllUsersLayout from "./layout";
 
 const DisplayAllUsers: React.FC = () => {
-  return (
-    <div>
-      <DisplayAllUsersLayout />
-    </div>
-  );
+  return <DisplayAllUsersLayout />;
 };
 
 export default DisplayAllUsers;
