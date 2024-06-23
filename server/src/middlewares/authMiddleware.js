@@ -4,8 +4,10 @@ const config = require("../config");
 const RoleModel = require("../models/roleModel");
 
 const authenticate = (req, res, next) => {
-  // const token = req.headers.authorization?.split(" ")[1];
-  const token = req.cookies.token;
+  const token = req.headers.authorization?.split(" ")[1];
+  // const token = req.cookies.token;
+  console.log("token", token);
+
   if (!token) {
     const err = createNewErrors("No token provided", 401, "unauthorized");
     return next(err);

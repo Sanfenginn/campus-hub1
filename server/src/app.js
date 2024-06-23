@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 const errorHandler = require("./middlewares/handleErrorMiddleware");
 const morgan = require("./utils/morgan");
@@ -15,6 +16,13 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     origin: "http://localhost:3000", // 你的前端地址
+//     credentials: true,
+//   })
+// );
 app.use(express.json());
 app.use(morgan);
 app.use(rateLimit);
@@ -23,6 +31,7 @@ app.use(formatResponse);
 
 app.post("/api/login", login);
 
+app.use(cookieParser());
 // 使用 authenticate 中间件来保护以下路由
 app.use(authenticate);
 
