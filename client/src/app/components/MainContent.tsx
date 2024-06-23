@@ -14,7 +14,7 @@ const EditPermissions = dynamic(
   () => import("../components/usersInterface/EditPermissions")
 );
 const DisplayAllUsers = dynamic(
-  () => import("../components/usersInterface/DisplayAllUsers")
+  () => import("./usersInterface/displayAllUsers/DisplayAllUsers")
 );
 const AddUser = dynamic(() => import("../components/usersInterface/AddUser"));
 

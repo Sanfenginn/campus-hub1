@@ -32,8 +32,8 @@ const SideBar: React.FC = () => {
   useEffect(() => {
     if (currentPage === "users") {
       setOptions([
-        { name: "Add User", path: "/users/add-user" },
         { name: "User Search", path: "/users/user-search" },
+        { name: "Add User", path: "/users/add-user" },
         { name: "Bulk Import and Export", path: "/users/add-many" },
         { name: "Permission Settings", path: "/users/permissions" },
       ]);
