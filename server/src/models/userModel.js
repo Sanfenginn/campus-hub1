@@ -16,22 +16,21 @@ const userSchema = new Schema({
   age: {
     type: Number,
     required: true,
-    _id: false,
   },
   account: {
     type: String,
     required: true,
-    _id: false,
   },
   password: {
     type: String,
     required: true,
-    _id: false,
   },
   role: {
-    type: Schema.Types.ObjectId,
-    ref: "Role",
-    required: true,
+    userType: {
+      type: String,
+      required: true,
+    },
+    roleInfo: { type: Schema.Types.ObjectId, ref: "Role", required: true },
     _id: false,
   },
   contact: {

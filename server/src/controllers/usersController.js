@@ -22,15 +22,18 @@ const addUser = async (req, res, next) => {
   }
 };
 
-const deleteUserById = async (req, res, next) => {
-  const { id } = req.params;
+const bulkDeleteUserById = async (req, res, next) => {
+  const { ids } = req.body;
+  console.log("ids", ids);
 
   try {
-    const deletedUser = await UserModel.findByIdAndDelete(id).exec();
+    const deletedUsers = await UserModel.deleteMany({
+      _id: { $in: ids },
+    }).exec();
 
-    checkResource(deletedUser, "User not found", 404, "notFound", next);
+    checkResource(deletedUsers, "User not found", 404, "notFound", next);
 
-    res.formatResponse(204, deletedUser);
+    res.formatResponse(204);
   } catch (err) {
     next(err);
   }
@@ -112,7 +115,7 @@ const getUserById = async (req, res, next) => {
 
 module.exports = {
   addUser,
-  deleteUserById,
+  bulkDeleteUserById,
   updateUserById,
   getAllUsers,
   getUserById,

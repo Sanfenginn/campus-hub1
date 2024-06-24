@@ -1,72 +1,16 @@
 const AutoIncrement = require("mongoose-sequence")(require("mongoose"));
 const { Schema, model } = require("mongoose");
 
-// 定义联系方式子文档 Schema
-const contactSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    // unique: true, // 唯一性验证
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  _id: false,
-});
-
-// 定义地址子文档 Schema
-const addressSchema = new Schema({
-  road: {
-    type: String,
-    required: true,
-  },
-  city: {
-    type: String,
-    required: true,
-  },
-  state: {
-    type: String,
-    required: true,
-  },
-  postalCode: {
-    type: String,
-    required: true,
-  },
-  _id: false,
-});
-
-const nameSchema = new Schema({
-  firstName: {
-    type: String,
-    //simple validation rules,
-    required: true, //只做基本非空验证
-    // minLength: 2,用其他的方式来验证
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  _id: false,
-});
-
 const studentSchema = new Schema({
-  // studentId: {
-  //   type: Number,
-  //   unique: true,
-  // },
-  name: nameSchema,
-  age: {
-    type: Number,
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   studentClass: {
-    // type: Number,
     type: Schema.Types.ObjectId,
     ref: "StudentClass",
   },
-  contact: contactSchema, // 嵌套文档
-  address: addressSchema, // 嵌套文档
 });
 
 // 在删除 Student 文档之前，更新所有关联的 StudentClass 文档
