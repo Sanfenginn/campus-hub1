@@ -16,9 +16,8 @@ const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
 
-  console.log("inputValue:", inputValue);
-
-  console.log("condition:", condition);
+  // console.log("inputValue:", inputValue);
+  // console.log("condition:", condition);
 
   const handleClick = async () => {
     setLoading(true);
@@ -31,7 +30,6 @@ const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
     try {
       const response = await getUsersData(input);
       dispatch(setUsersData(response?.data?.message ?? []));
-      console.log("response:", response);
     } catch (err) {
       console.error(err);
     } finally {

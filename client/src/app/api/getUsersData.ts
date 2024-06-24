@@ -13,8 +13,8 @@ const getUsersData = async (input: Input) => {
     const token = localStorage.getItem("token");
     console.log("url:", url);
 
-    console.log("condition:", input.condition);
-    console.log("inputValue:", input.inputValue);
+    // console.log("condition:", input.condition);
+    // console.log("inputValue:", input.inputValue);
 
     const response = await axios.get(`${url}/users`, {
       params: {
@@ -25,6 +25,7 @@ const getUsersData = async (input: Input) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("response:", response);
     return response;
   } catch (err) {
     console.error(err);
