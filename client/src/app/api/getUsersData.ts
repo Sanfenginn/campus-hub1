@@ -6,23 +6,23 @@ type Input = {
 };
 
 const getUsersData = async (input: Input) => {
-  console.log("input:", input);
+  // console.log("input:", input);
 
   try {
     const url = process.env.NEXT_PUBLIC_API_URL;
     const token = localStorage.getItem("token");
-    console.log("url:", url);
-
+    // console.log("url:", url);
     // console.log("condition:", input.condition);
     // console.log("inputValue:", input.inputValue);
+
+    if (!url) {
+      throw new Error("REACT_APP_API_URL is not defined");
+    }
 
     const response = await axios.get(`${url}/users`, {
       params: {
         condition: input.condition,
         inputValue: input.inputValue,
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
       },
     });
     console.log("response:", response);

@@ -2,6 +2,8 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useState } from "react";
+import { setSelectedUsersIds } from "@/app/redux/selectedUsersIds";
+import { useDispatch } from "react-redux";
 
 const columns: GridColDef[] = [
   //   { field: "id", headerName: "ID", width: 70 },
@@ -74,12 +76,13 @@ type User = {
 
 const UsersList: React.FC = () => {
   const usersData = useSelector((state: RootState) => state.usersData);
-  console.log("usersData:", usersData);
+  // console.log("usersData:", usersData);
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
     []
   );
+  const dispatch = useDispatch();
 
-  // console.log("selectionModel:", selectionModel);
+  console.log("selectionModel:", selectionModel);
 
   const rows = usersData.map((user: User) => ({
     id: user._id,
@@ -105,6 +108,7 @@ const UsersList: React.FC = () => {
       checkboxSelection
       onRowSelectionModelChange={(newSelectionModel) => {
         setSelectionModel(newSelectionModel);
+        dispatch(setSelectedUsersIds(newSelectionModel as string[]));
       }}
     />
   );
