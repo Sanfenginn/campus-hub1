@@ -1,6 +1,7 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import { useState } from "react";
 
 const columns: GridColDef[] = [
   //   { field: "id", headerName: "ID", width: 70 },
@@ -74,6 +75,11 @@ type User = {
 const UsersList: React.FC = () => {
   const usersData = useSelector((state: RootState) => state.usersData);
   console.log("usersData:", usersData);
+  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
+    []
+  );
+
+  // console.log("selectionModel:", selectionModel);
 
   const rows = usersData.map((user: User) => ({
     id: user._id,
@@ -87,20 +93,20 @@ const UsersList: React.FC = () => {
   }));
 
   return (
-    <div className="h-full">
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 21 },
-          },
-        }}
-        pageSizeOptions={[5, 10, 15, 20, 25]}
-        checkboxSelection
-        sx={{ border: "3px solid blue" }}
-      />
-    </div>
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      initialState={{
+        pagination: {
+          paginationModel: { page: 0, pageSize: 20 },
+        },
+      }}
+      pageSizeOptions={[5, 10, 15, 20, 25]}
+      checkboxSelection
+      onRowSelectionModelChange={(newSelectionModel) => {
+        setSelectionModel(newSelectionModel);
+      }}
+    />
   );
 };
 
