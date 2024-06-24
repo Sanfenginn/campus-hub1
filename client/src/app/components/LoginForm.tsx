@@ -8,11 +8,12 @@ import {
   Container,
   CssBaseline,
 } from "@mui/material";
-import login from "../api/login";
 import { useRouter } from "next/navigation";
+import { useLogin } from "../api/login";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
+  const login = useLogin();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
