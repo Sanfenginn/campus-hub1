@@ -16,7 +16,6 @@ const UsersPage: React.FC = () => {
           condition: "All Users",
           inputValue: "",
         });
-        console.log("response111:", response);
         dispatch(setUsersData(response?.data?.message ?? []));
       } catch (err) {
         console.error(err);

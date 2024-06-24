@@ -2,7 +2,7 @@ const express = require("express");
 const usersRouter = express.Router();
 const {
   addUser,
-  deleteUserById,
+  bulkDeleteUserById,
   updateUserById,
   getAllUsers,
   getUserById,
@@ -16,6 +16,6 @@ usersRouter.get("/", getAllUsers);
 usersRouter.get("/:id", checkId, getUserById);
 usersRouter.post("/", validateUser, addUser);
 usersRouter.put("/:id", checkId, validateUser, updateUserById);
-usersRouter.delete("/:id", checkId, deleteUserById);
+usersRouter.delete("/", bulkDeleteUserById);
 
 module.exports = usersRouter;

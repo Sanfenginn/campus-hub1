@@ -39,6 +39,7 @@ const login = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production", // 在生产环境中使用 HTTPS
       sameSite: "strict",
       maxAge: 3600000, // 1小时
+      // maxAge: 60 * 1000,
     });
 
     res.formatResponse(200, "Login successful", {

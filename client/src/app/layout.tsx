@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.scss";
 import ClientProvider from "./utils/ClientProvider";
+// import { useAxiosInterceptors } from "./lib/api";
+// import { useAxiosInterceptors } from "@/lib/api";
+import { useAxiosInterceptors } from "./lib/api";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("Rendering RootLayout");
+  // const axiosInterceptors = useAxiosInterceptors();
+  // useAxiosInterceptors();
+
   return (
     <html lang="en">
       <body className={inter.className}>

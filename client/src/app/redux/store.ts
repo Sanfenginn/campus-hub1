@@ -3,7 +3,9 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import secondFunctionReducer from "./secondFunction";
 import { thunk } from "redux-thunk"; // 导入命名导出 thunk
-import usersDataReducer from "./usersData"; // 导入默认导出 usersDataSlice.reducer
+import usersDataReducer from "./usersData";
+import authReducer from "./authSlice";
+import selectedUsersIdsReducer from "./selectedUsersIds";
 
 // 为每个需要持久化的 reducer 定义单独的持久化配置
 // const fourHotCitiesWeatherDataPersistConfig = {
@@ -21,6 +23,8 @@ const store = configureStore({
   reducer: {
     secondFunction: secondFunctionReducer,
     usersData: usersDataReducer,
+    auth: authReducer,
+    selectedUsersIds: selectedUsersIdsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
