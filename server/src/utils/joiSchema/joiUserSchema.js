@@ -35,6 +35,21 @@ const userSchema = Joi.object({
     then: Joi.optional(),
     otherwise: Joi.required(),
   }),
+  dob: Joi.date()
+    .messages({})
+    .messages({
+      "date.base": `"dob" should be a type of 'date'`,
+      "date.empty": `"dob" cannot be an empty field`,
+    })
+    .when("$isUpdate", {
+      is: true,
+      then: Joi.optional(),
+      otherwise: Joi.required(),
+    }),
+  age: Joi.number().messages({
+    "number.base": `"age" should be a type of 'number'`,
+    "number.empty": `"age" cannot be an empty field`,
+  }),
   account: Joi.string()
     .messages({
       "string.base": `"account" should be a type of 'text'`,
@@ -55,16 +70,32 @@ const userSchema = Joi.object({
       then: Joi.optional(),
       otherwise: Joi.required(),
     }),
-  role: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .messages({
-      "string.pattern.base": `"role" should be a valid ObjectId`,
-    })
-    .when("$isUpdate", {
-      is: true,
-      then: Joi.optional(),
-      otherwise: Joi.required(),
-    }),
+  role: Joi.object({
+    userType: Joi.string()
+      .valid("student", "teacher", "admin")
+      .messages({
+        "any.only": `"userType" must be one of ['student', 'teacher', 'admin']`,
+      })
+      .when("$isUpdate", {
+        is: true,
+        then: Joi.optional(),
+        otherwise: Joi.required(),
+      }),
+    userId: Joi.string()
+      .pattern(/^[0-9a-fA-F]{24}$/)
+      .messages({
+        "string.pattern.base": `"userId" must be a valid ObjectId`,
+      }),
+    roleInfo: Joi.string()
+      .pattern(/^[0-9a-fA-F]{24}$/)
+      .messages({
+        "string.pattern.base": `"roleInfo" must be a valid ObjectId`,
+      }),
+  }).when("$isUpdate", {
+    is: true,
+    then: Joi.optional(),
+    otherwise: Joi.required(),
+  }),
   contact: Joi.object({
     email: Joi.string()
       .email()
@@ -92,51 +123,73 @@ const userSchema = Joi.object({
     otherwise: Joi.required(),
   }),
   address: Joi.object({
-    road: Joi.string()
+    houseNumber: Joi.string()
+      .messages({
+        "string.base": `"houseNumber" should be a type of 'text'`,
+      })
+      .optional(),
+    // .when("$isUpdate", {
+    //   is: true,
+    //   then: Joi.optional(),
+    //   otherwise: Joi.required(),
+    // }),
+    street: Joi.string()
       .messages({
         "string.base": `"road" should be a type of 'text'`,
-        "string.empty": `"road" cannot be an empty field`,
       })
-      .when("$isUpdate", {
-        is: true,
-        then: Joi.optional(),
-        otherwise: Joi.required(),
-      }),
+      .optional(),
+    // .when("$isUpdate", {
+    //   is: true,
+    //   then: Joi.optional(),
+    //   otherwise: Joi.required(),
+    // }),
+    suburb: Joi.string()
+      .messages({
+        "string.base": `"suburb" should be a type of 'text'`,
+      })
+      .optional(),
+    // .when("$isUpdate", {
+    //   is: true,
+    //   then: Joi.optional(),
+    //   otherwise: Joi.required(),
+    // }),
     city: Joi.string()
       .messages({
         "string.base": `"city" should be a type of 'text'`,
-        "string.empty": `"city" cannot be an empty field`,
       })
-      .when("$isUpdate", {
-        is: true,
-        then: Joi.optional(),
-        otherwise: Joi.required(),
-      }),
+      .optional(),
     state: Joi.string()
       .messages({
         "string.base": `"state" should be a type of 'text'`,
-        "string.empty": `"state" cannot be an empty field`,
       })
-      .when("$isUpdate", {
-        is: true,
-        then: Joi.optional(),
-        otherwise: Joi.required(),
-      }),
+      .optional(),
+    // .when("$isUpdate", {
+    //   is: true,
+    //   then: Joi.optional(),
+    //   otherwise: Joi.required(),
+    // }),
+    country: Joi.string()
+      .messages({
+        "string.base": `"country" should be a type of 'text'`,
+      })
+      .optional(),
     postalCode: Joi.string()
       .pattern(/^\d{4,8}$/)
       .messages({
         "string.pattern.base": `"postalCode" should be a 4 to 8 digit number`,
       })
-      .when("$isUpdate", {
-        is: true,
-        then: Joi.optional(),
-        otherwise: Joi.required(),
-      }),
-  }).when("$isUpdate", {
-    is: true,
-    then: Joi.optional(),
-    otherwise: Joi.required(),
+      .optional(),
+    // .when("$isUpdate", {
+    //   is: true,
+    //   then: Joi.optional(),
+    //   otherwise: Joi.required(),
+    // }),
   }),
+  // .when("$isUpdate", {
+  //   is: true,
+  //   then: Joi.optional(),
+  //   otherwise: Joi.required(),
+  // }),
 });
 
 module.exports = userSchema;

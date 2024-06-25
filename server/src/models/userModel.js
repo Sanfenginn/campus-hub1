@@ -13,9 +13,19 @@ const userSchema = new Schema({
     },
     _id: false,
   },
+  dob: {
+    type: Date,
+    required: true,
+    set: (value) => {
+      if (typeof value === "string") {
+        return new Date(value);
+      }
+      return value;
+    },
+  },
   age: {
     type: Number,
-    required: true,
+    // required: true,
   },
   account: {
     type: String,
@@ -28,9 +38,14 @@ const userSchema = new Schema({
   role: {
     userType: {
       type: String,
+      enum: ["student", "teacher", "admin"],
       required: true,
     },
-    roleInfo: { type: Schema.Types.ObjectId, ref: "Role", required: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      refPath: "role.userTypeRef",
+    },
+    roleInfo: { type: Schema.Types.ObjectId, ref: "Role" },
     _id: false,
   },
   contact: {
@@ -45,31 +60,54 @@ const userSchema = new Schema({
     _id: false,
   },
   address: {
-    road: {
+    houseNumber: {
       type: String,
-      required: true,
+      // required: true,
+    },
+    street: {
+      type: String,
+      // required: true,
+    },
+    suburb: {
+      type: String,
+      // required: true,
     },
     city: {
       type: String,
-      required: true,
+      // required: true,
     },
     state: {
       type: String,
-      required: true,
+      // required: true,
+    },
+    country: {
+      type: String,
+      // required: true,
     },
     postalCode: {
       type: String,
-      required: true,
+      // required: true,
     },
     _id: false,
   },
 });
 
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
+// userSchema.pre("save", async function (next) {
+//   if (this.isModified("password")) {
+//     this.password = await bcrypt.hash(this.password, 10);
+//   }
+//   next();
+// });
+
+// 动态设置引用的路径
+userSchema.virtual("role.userTypeRef").get(function () {
+  return this.role.userType === "student"
+    ? "Student"
+    : this.role.userType === "teacher"
+    ? "Teacher"
+    : this.role.userType === "admin"
+    ? "Admin"
+    : null;
 });
 
 module.exports = model("User", userSchema);
