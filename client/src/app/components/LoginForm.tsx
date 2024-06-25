@@ -1,4 +1,3 @@
-// components/LoginForm.tsx
 import React from "react";
 import {
   Button,
@@ -26,6 +25,7 @@ const LoginForm: React.FC = () => {
 
     try {
       const response = await login(account, password);
+      console.log("response: ", response);
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("userRole", response.data.userRole);
       // 在登录成功后跳转到系统主界面

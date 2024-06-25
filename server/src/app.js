@@ -33,7 +33,7 @@ app.post("/api/login", login);
 
 app.use(cookieParser());
 // 使用 authenticate 中间件来保护以下路由
-app.use(authenticate);
+// app.use(authenticate);
 
 app.use("/api", router);
 

@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (tokenExpirationDate <= new Date()) {
         localStorage.removeItem("token");
         dispatch(logout());
-        router.push("/login");
+        router.push("/");
       } else {
         // 假设你有一个 API 可以获取用户信息
         fetchUserFromToken(token).then((user) => {

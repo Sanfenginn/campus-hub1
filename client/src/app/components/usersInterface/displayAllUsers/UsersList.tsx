@@ -1,20 +1,14 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useState } from "react";
 import { setSelectedUsersIds } from "@/app/redux/selectedUsersIds";
-import { useDispatch } from "react-redux";
+import { setSelectedUserInfo } from "@/app/redux/selectedUserInfo";
 
 const columns: GridColDef[] = [
   //   { field: "id", headerName: "ID", width: 70 },
   { field: "firstName", headerName: "First name", width: 100 },
   { field: "lastName", headerName: "Last name", width: 100 },
-  // {
-  //   field: "age",
-  //   headerName: "Age",
-  //   type: "number",
-  //   width: 80,
-  // },
   {
     field: "age",
     headerName: "Age",
@@ -60,18 +54,24 @@ type User = {
     firstName: string;
     lastName: string;
   };
-  age: number;
+  dob: Date;
   contact: {
     email: string;
     phone: string;
   };
   address: {
-    road: string;
+    houseNumber: string;
+    street: string;
+    suburb: string;
     city: string;
     state: string;
+    country: string;
     postalCode: string;
   };
   account: string;
+  role: {
+    userType: string;
+  };
 };
 
 const UsersList: React.FC = () => {
@@ -84,16 +84,43 @@ const UsersList: React.FC = () => {
 
   console.log("selectionModel:", selectionModel);
 
-  const rows = usersData.map((user: User) => ({
-    id: user._id,
-    firstName: user.name.firstName,
-    lastName: user.name.lastName,
-    age: user.age,
-    email: user.contact.email,
-    phone: user.contact.phone,
-    address: `${user.address.road}, ${user.address.city}, ${user.address.state}, ${user.address.postalCode}`,
-    account: user.account,
-  }));
+  const rows = usersData.map((user: User) => {
+    const addressParts = [
+      user.address.houseNumber,
+      user.address.street,
+      user.address.suburb,
+      user.address.city,
+      user.address.state,
+      user.address.country,
+      user.address.postalCode,
+    ].filter(Boolean); // 过滤掉任何假值，例如空字符串或 null
+
+    const dob = new Date(user.dob);
+    const age = new Date().getFullYear() - dob.getFullYear();
+
+    return {
+      id: user._id,
+      firstName: user.name.firstName,
+      lastName: user.name.lastName,
+      age: age,
+      email: user.contact.email,
+      phone: user.contact.phone,
+      address: addressParts.join(", "),
+      account: user.account,
+    };
+  });
+
+  const handleSelectionModelChange = (
+    newSelectionModel: GridRowSelectionModel
+  ) => {
+    setSelectionModel(newSelectionModel);
+    const selectedUsers = newSelectionModel.map((id) =>
+      usersData.find((user: User) => user._id === id)
+    );
+    console.log("selectedUsers:", selectedUsers);
+    dispatch(setSelectedUsersIds(newSelectionModel as string[]));
+    dispatch(setSelectedUserInfo(selectedUsers));
+  };
 
   return (
     <DataGrid
@@ -106,10 +133,7 @@ const UsersList: React.FC = () => {
       }}
       pageSizeOptions={[5, 10, 15, 20, 25]}
       checkboxSelection
-      onRowSelectionModelChange={(newSelectionModel) => {
-        setSelectionModel(newSelectionModel);
-        dispatch(setSelectedUsersIds(newSelectionModel as string[]));
-      }}
+      onRowSelectionModelChange={handleSelectionModelChange}
     />
   );
 };

@@ -44,7 +44,7 @@ const login = async (req, res, next) => {
 
     res.formatResponse(200, "Login successful", {
       userId: user._id,
-      userRole: user.role.role,
+      userRole: user.role.userType,
       token: token,
     });
   } catch (err) {

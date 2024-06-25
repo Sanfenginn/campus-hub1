@@ -2,6 +2,17 @@ const AutoIncrement = require("mongoose-sequence")(require("mongoose"));
 const { Schema, model } = require("mongoose");
 
 const studentSchema = new Schema({
+  name: {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    _id: false,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",

@@ -4,8 +4,9 @@ const Permission = require("../models/permissionModel");
 const config = require("../config");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const { ObjectId } = mongoose.Types;
 
-async function seedRolesAndPermissions() {
+const seedRolesAndPermissions = async () => {
   try {
     await mongoose.connect(config.DB_CONNECTION_STRING, {
       useNewUrlParser: true,
@@ -17,19 +18,35 @@ async function seedRolesAndPermissions() {
     console.log("Connected to MongoDB");
 
     const initialPassword = "12345";
-    const hashedPassword = await bcrypt.hash(initialPassword, 10);
+    const hashedPassword = await bcrypt.hash("12345", 10);
+    console.log("hashedPassword", hashedPassword);
 
-    await User.insertOne({
-      name: { firstName: "Admin", lastName: "User" },
+    // 删除已有的管理员用户（如果存在）
+    const deleteResult = await User.deleteOne({ account: "admin" });
+    console.log("Admin user deletion result:", deleteResult);
+
+    await User.create({
+      name: {
+        firstName: "Admin",
+        lastName: "Admin",
+      },
+      age: 45,
       account: "admin",
       password: hashedPassword,
-      role: ObjectId("66747dabeb6c29ccfaf807ba"),
-      contact: { email: "admin@example.com", phone: "+61400000000" },
+      role: {
+        userType: "admin",
+        userId: new ObjectId("667985466999b0341e503c03"), // 使用 new ObjectId()
+        roleInfo: new ObjectId("66747dabeb6c29ccfaf807ba"), // 使用 new ObjectId()
+      },
+      contact: {
+        email: "admin.admin@example.com",
+        phone: "+61456789012",
+      },
       address: {
-        road: "Admin Road",
-        city: "Admin City",
-        state: "Admin State",
-        postalCode: "0000",
+        road: "123 Admin Rd",
+        city: "Sydney",
+        state: "NSW",
+        postalCode: "2000",
       },
     });
 
@@ -123,7 +140,7 @@ async function seedRolesAndPermissions() {
   } finally {
     mongoose.connection.close();
   }
-}
+};
 
 // 执行函数
 seedRolesAndPermissions().catch((err) => console.log(err));

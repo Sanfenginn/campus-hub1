@@ -6,11 +6,13 @@ const coursesRouter = require("./coursesRouter");
 const studentClassesRouter = require("./studentClassesRouter");
 const teachersRouter = require("./teachersRouter");
 const usersRouter = require("./usersRouter");
+const getAddressRouter = require("./getAddressRouter");
 
 router.use("/students", studentsRouter);
 router.use("/courses", coursesRouter);
 router.use("/student-classes", studentClassesRouter);
 router.use("/teachers", teachersRouter);
 router.use("/users", usersRouter);
+router.use("/get-addresses", getAddressRouter);
 
 module.exports = router;
