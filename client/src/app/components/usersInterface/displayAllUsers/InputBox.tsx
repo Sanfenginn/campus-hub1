@@ -30,6 +30,7 @@ const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
     try {
       const response = await getUsersData(input);
       dispatch(setUsersData(response?.data?.message ?? []));
+      console.log("response in input:", response);
     } catch (err) {
       console.error(err);
     } finally {

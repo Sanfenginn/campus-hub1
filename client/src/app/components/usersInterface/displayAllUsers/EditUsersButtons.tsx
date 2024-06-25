@@ -3,28 +3,49 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import Stack from "@mui/material/Stack";
 import EditIcon from "@mui/icons-material/Edit";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import bulkDeleteUsers from "@/app/api/deleteUsers";
 import getUsersData from "@/app/api/getUsersData";
-import { useDispatch } from "react-redux";
 import { setUsersData } from "@/app/redux/usersData";
+import ConfirmDelete from "@/app/components/usersInterface/displayAllUsers/ConfirmDeleteModel";
+import { useState } from "react";
+import UserModel from "@/app/components/usersInterface/displayAllUsers/UserModel";
+import ReminderForSelection from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
 
 const EditUsersButtons: React.FC = () => {
   const dispatch = useDispatch();
+  const [confirmDeletionModelShow, setConfirmDeletionModelShow] =
+    useState(false);
+  const [addUserModelShow, setAddUserModelShow] = useState(false);
+  const [editUserModelShow, setEditUserModelShow] = useState(false);
+  const [reminderForSelectionShow, setReminderForSelectionShow] =
+    useState(false);
+
   const selectedUsersIds = useSelector(
     (state: RootState) => state.selectedUsersIds
   );
-  console.log("selectedUsersIds:", selectedUsersIds);
+  // console.log("selectedUsersIds:", selectedUsersIds);
 
-  const secondFunction = useSelector(
-    (state: RootState) => state.secondFunction.secondFunction
-  );
+  const handleConfirmDeletionShow = () => {
+    setConfirmDeletionModelShow(true);
+  };
+
+  const handleConfirmDeletionClose = () => {
+    setConfirmDeletionModelShow(false);
+  };
+
+  const handleConfirmDeletion = () => {
+    if (selectedUsersIds.length === 0) {
+      handleReminderForSelection();
+      return;
+    }
+    handleConfirmDeletionShow();
+  };
 
   const handleDeleteUsers = async () => {
     try {
-      const responseBefore = await bulkDeleteUsers(selectedUsersIds);
-      console.log("responseBefore:", responseBefore);
+      await bulkDeleteUsers(selectedUsersIds);
       const responseAfter = await getUsersData({
         condition: "All Users",
         inputValue: "",
@@ -35,23 +56,94 @@ const EditUsersButtons: React.FC = () => {
     }
   };
 
+  const handleAddUserModelShow = () => {
+    setAddUserModelShow(true);
+  };
+
+  const handleAddUserModelClose = () => {
+    setAddUserModelShow(false);
+  };
+
+  const handleAddUser = () => {
+    handleAddUserModelShow();
+  };
+
+  const handleEditUserModelShow = () => {
+    setEditUserModelShow(true);
+  };
+
+  const handleEditUserModelClose = () => {
+    setEditUserModelShow(false);
+  };
+
+  const handleReminderForSelectionShow = () => {
+    setReminderForSelectionShow(true);
+  };
+
+  const handleReminderForSelectionClose = () => {
+    setReminderForSelectionShow(false);
+  };
+
+  const handleReminderForSelection = () => {
+    handleReminderForSelectionShow();
+  };
+
+  const handleEditUser = () => {
+    if (selectedUsersIds.length > 1 || selectedUsersIds.length === 0) {
+      handleReminderForSelection();
+      return;
+    }
+    handleEditUserModelShow();
+  };
+
   return (
-    <Stack direction="row" spacing={2}>
-      <Button className="w-[8rem]" variant="contained" startIcon={<EditIcon />}>
-        Edit
-      </Button>
-      <Button className="w-[8rem]" variant="contained" startIcon={<AddIcon />}>
-        Add
-      </Button>
-      <Button
-        className="w-[8rem]"
-        variant="outlined"
-        startIcon={<DeleteIcon />}
-        onClick={handleDeleteUsers}
-      >
-        Delete
-      </Button>
-    </Stack>
+    <div>
+      <Stack direction="row" spacing={2}>
+        <Button
+          className="w-[8rem]"
+          variant="contained"
+          startIcon={<EditIcon />}
+          onClick={handleEditUser}
+        >
+          Edit
+        </Button>
+        <Button
+          className="w-[8rem]"
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddUser}
+        >
+          Add
+        </Button>
+        <Button
+          className="w-[8rem]"
+          variant="outlined"
+          startIcon={<DeleteIcon />}
+          onClick={handleConfirmDeletion}
+        >
+          Delete
+        </Button>
+      </Stack>
+      <ConfirmDelete
+        show={confirmDeletionModelShow}
+        handleClose={handleConfirmDeletionClose}
+        onConfirm={handleDeleteUsers}
+      />
+      <UserModel
+        show={addUserModelShow}
+        handleCloseAdd={handleAddUserModelClose}
+        isEditUser={false}
+      />
+      <UserModel
+        show={editUserModelShow}
+        handleCloseEdit={handleEditUserModelClose}
+        isEditUser={true}
+      />
+      <ReminderForSelection
+        show={reminderForSelectionShow}
+        handleClose={handleReminderForSelectionClose}
+      />
+    </div>
   );
 };
 
