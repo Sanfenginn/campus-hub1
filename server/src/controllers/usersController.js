@@ -123,6 +123,11 @@ const getAllUsers = async (req, res, next) => {
         query = {
           $or: [{ "name.firstName": regex }, { "name.lastName": regex }],
         };
+      } else if (condition === "Role") {
+        query = {
+          "role.userType": inputValue,
+          "name.firstName": { $ne: "Admin" },
+        };
       } else {
         query[condition.toLowerCase()] = inputValue;
       }

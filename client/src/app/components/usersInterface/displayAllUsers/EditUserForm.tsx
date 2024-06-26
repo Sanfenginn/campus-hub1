@@ -457,6 +457,7 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
               fullWidth
               options={options}
               inputValue={inputValue}
+              value={address}
               onInputChange={handleInputChange}
               renderInput={(params) => (
                 <TextField
