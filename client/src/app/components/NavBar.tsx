@@ -22,7 +22,6 @@ type Page = {
 
 const NavBar: React.FC = () => {
   const [pages, setPages] = useState<Page[]>([]);
-  const [currentPage, setCurrentPage] = useState<String>("");
   const settings = ["Profile", "Change Password", "Logout"];
   const router = useRouter();
 

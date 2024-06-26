@@ -65,11 +65,12 @@ const userSchema = Joi.object({
       "string.base": `"password" should be a type of 'text'`,
       "string.empty": `"password" cannot be an empty field`,
     })
-    .when("$isUpdate", {
-      is: true,
-      then: Joi.optional(),
-      otherwise: Joi.required(),
-    }),
+    .optional(),
+  // .when("$isUpdate", {
+  //   is: true,
+  //   then: Joi.optional(),
+  //   otherwise: Joi.required(),
+  // }),
   role: Joi.object({
     userType: Joi.string()
       .valid("student", "teacher", "admin")

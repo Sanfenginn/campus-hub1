@@ -5,16 +5,22 @@ const checkResource = require("../utils/checkResource");
 const TeacherModel = require("../models/teacherModel");
 const StudentModel = require("../models/studentModel");
 const RoleModel = require("../models/roleModel");
-const moment = require("moment");
 
 const addUser = async (req, res, next) => {
   const users = req.body;
+
+  console.log("users in usersContr", users);
 
   try {
     // Step 1: Hash passwords
     const usersWithHashedPasswords = await Promise.all(
       users.map(async (user) => {
+        console.log("开始加密密码");
+        console.log("user.password", user.password);
+        console.log("typeof user.password", typeof user.password);
+        console.log("user.dob", user.dob);
         const hashedPassword = await bcrypt.hash(user.password, 10);
+        console.log("hashedPassword", hashedPassword);
         const dob = new Date(Date.parse(user.dob.split("T")[0]));
         console.log("dob", dob);
         const role = await RoleModel.findOne({
@@ -34,6 +40,8 @@ const addUser = async (req, res, next) => {
 
     // Step 2: Insert users with hashed passwords
     const newUsers = await UserModel.insertMany(usersWithHashedPasswords);
+
+    // console.log("newUsers in users", newUsers);
 
     // Step 3: Create related student or teacher documents
     const createRelatedDocs = newUsers.map(async (user) => {

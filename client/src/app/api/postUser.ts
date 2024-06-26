@@ -5,7 +5,7 @@ interface User {
     firstName: string;
     lastName: string;
   };
-  dob: string;
+  dob: string | Date;
   account: string;
   password: string;
   role: {
@@ -28,9 +28,15 @@ interface User {
 
 const postUser = async (newUser: User[]) => {
   try {
+    console.log("newUser:", newUser);
+    console.log("开始添加用户");
     const url = process.env.NEXT_PUBLIC_API_URL + "/users";
-    const response = await axios.post(url, newUser);
-    console.log("response:", response);
+    const response = await axios.post(url, newUser, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("response3:", response);
     return response;
   } catch (err) {
     console.error(err);
