@@ -36,6 +36,13 @@ const postUser = async (newUser: User[]) => {
         "Content-Type": "application/json",
       },
     });
+    // const response = await fetch(url, {
+    //   method: "post",
+    //   body: JSON.stringify(newUser),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
     console.log("response3:", response);
     return response;
   } catch (err) {
