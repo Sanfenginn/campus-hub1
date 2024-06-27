@@ -10,8 +10,9 @@ const ClassesPage = dynamic(() => import("../components/ ClassesContent"));
 const AddManyUsers = dynamic(
   () => import("./usersInterface/bulkAddUsers/BulkAddUsers")
 );
-const EditPermissions = dynamic(
-  () => import("../components/usersInterface/EditPermissions")
+const PermissionsSetting = dynamic(
+  () =>
+    import("../components/usersInterface/permissionsSetting/PermissionsSetting")
 );
 const DisplayAllUsers = dynamic(
   () => import("./usersInterface/displayAllUsers/DisplayAllUsers")
@@ -36,7 +37,7 @@ const MainContent: React.FC = () => {
       case "/users/add-many":
         return <AddManyUsers />;
       case "/users/permissions":
-        return <EditPermissions />;
+        return <PermissionsSetting />;
       default:
         return <DisplayAllUsers />;
     }

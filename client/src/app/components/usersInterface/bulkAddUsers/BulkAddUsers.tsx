@@ -80,84 +80,6 @@ const UsersFileUpload: React.FC = () => {
   console.log("selectedFiles: ", selectedFiles);
   console.log("previewContent: ", previewContent);
 
-  const aaa = [
-    {
-      name: {
-        firstName: "John",
-        lastName: "Doe",
-      },
-      dob: "2001-04-15",
-      account: "john",
-      password: "12345",
-      role: {
-        userType: "student",
-      },
-      contact: {
-        email: "john.doe@example.com",
-        phone: "+61412345678",
-      },
-      address: {
-        houseNumber: "123",
-        street: "Example Street",
-        suburb: "Example Suburb",
-        city: "Sydney",
-        state: "NSW",
-        country: "Australia",
-        postalCode: "2000",
-      },
-    },
-    {
-      name: {
-        firstName: "Jane",
-        lastName: "Smith",
-      },
-      dob: "2000-09-21",
-      account: "jane",
-      password: "12345",
-      role: {
-        userType: "student",
-      },
-      contact: {
-        email: "jane.smith@example.com",
-        phone: "+61487654321",
-      },
-      address: {
-        houseNumber: "456",
-        street: "Sample Avenue",
-        suburb: "Sample Suburb",
-        city: "Melbourne",
-        state: "VIC",
-        country: "Australia",
-        postalCode: "3000",
-      },
-    },
-    {
-      name: {
-        firstName: "Alice",
-        lastName: "Johnson",
-      },
-      dob: "1999-12-05",
-      account: "alice",
-      password: "12345",
-      role: {
-        userType: "student",
-      },
-      contact: {
-        email: "alice.johnson@example.com",
-        phone: "+61423456789",
-      },
-      address: {
-        houseNumber: "789",
-        street: "Demo Road",
-        suburb: "Demo Suburb",
-        city: "Brisbane",
-        state: "QLD",
-        country: "Australia",
-        postalCode: "4000",
-      },
-    },
-  ];
-
   const handleUpload = async () => {
     const formData = new FormData();
     selectedFiles.forEach((file) => {
@@ -169,10 +91,6 @@ const UsersFileUpload: React.FC = () => {
       console.log("response2:", response);
       // setSelectedFiles([]);
       // setPreviewContent([]);
-
-      console.log("aaa: ", aaa);
-      const response1 = await postUser(response);
-      console.log("response1:", response1);
     } catch (error) {
       console.error("Upload failed:", error);
     }

@@ -9,18 +9,11 @@ const RoleModel = require("../models/roleModel");
 const addUser = async (req, res, next) => {
   const users = req.body;
 
-  console.log("Header", req.headers);
-
-  console.log("users in usersContr", users);
-
   try {
     // Step 1: Hash passwords
     const usersWithHashedPasswords = await Promise.all(
       users.map(async (user) => {
         console.log("开始加密密码");
-        console.log("user.password", user.password);
-        console.log("typeof user.password", typeof user.password);
-        console.log("user.dob", user.dob);
         const hashedPassword = await bcrypt.hash(user.password, 10);
         console.log("hashedPassword", hashedPassword);
         const dob = new Date(Date.parse(user.dob.split("T")[0]));
@@ -64,6 +57,7 @@ const addUser = async (req, res, next) => {
     });
 
     const relatedDocs = await Promise.all(createRelatedDocs);
+    console.log("relatedDocs", relatedDocs);
 
     // Step 4: Update users with the related document IDs
     const updateUsers = relatedDocs.map(({ userId, relatedDocId }) =>
@@ -71,6 +65,7 @@ const addUser = async (req, res, next) => {
     );
 
     await Promise.all(updateUsers);
+    console.log("写入数据库成功");
 
     res.formatResponse(201, newUsers);
   } catch (err) {
