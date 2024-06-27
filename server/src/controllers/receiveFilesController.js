@@ -32,6 +32,7 @@ const receiveFiles = async (req, res, next) => {
         "uploadError",
         err.message
       );
+      console.log("err.message", err.message);
       return next(customErr);
     } else if (err) {
       const customErr = createNewErrors(

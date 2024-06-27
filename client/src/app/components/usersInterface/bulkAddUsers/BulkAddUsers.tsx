@@ -165,13 +165,13 @@ const UsersFileUpload: React.FC = () => {
     });
 
     try {
-      // const response = await postBulkUsers(formData);
-      // console.log("response2:", response);
+      const response = await postBulkUsers(formData);
+      console.log("response2:", response);
       // setSelectedFiles([]);
       // setPreviewContent([]);
 
       console.log("aaa: ", aaa);
-      const response1 = await postUser(aaa);
+      const response1 = await postUser(response);
       console.log("response1:", response1);
     } catch (error) {
       console.error("Upload failed:", error);

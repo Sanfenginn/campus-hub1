@@ -9,6 +9,8 @@ const RoleModel = require("../models/roleModel");
 const addUser = async (req, res, next) => {
   const users = req.body;
 
+  console.log("Header", req.headers);
+
   console.log("users in usersContr", users);
 
   try {
@@ -41,7 +43,7 @@ const addUser = async (req, res, next) => {
     // Step 2: Insert users with hashed passwords
     const newUsers = await UserModel.insertMany(usersWithHashedPasswords);
 
-    // console.log("newUsers in users", newUsers);
+    console.log("newUsers in users", newUsers);
 
     // Step 3: Create related student or teacher documents
     const createRelatedDocs = newUsers.map(async (user) => {
@@ -72,6 +74,7 @@ const addUser = async (req, res, next) => {
 
     res.formatResponse(201, newUsers);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
