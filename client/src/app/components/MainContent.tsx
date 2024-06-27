@@ -8,7 +8,7 @@ const UsersPage = dynamic(() => import("../components/UsersContent"));
 const CoursesPage = dynamic(() => import("../components/ CoursesContent"));
 const ClassesPage = dynamic(() => import("../components/ ClassesContent"));
 const AddManyUsers = dynamic(
-  () => import("../components/usersInterface/AddManyUsers")
+  () => import("./usersInterface/bulkAddUsers/BulkAddUsers")
 );
 const EditPermissions = dynamic(
   () => import("../components/usersInterface/EditPermissions")

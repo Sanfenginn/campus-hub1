@@ -1,5 +1,4 @@
 const { Schema, model } = require("mongoose");
-const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
   name: {
@@ -22,10 +21,6 @@ const userSchema = new Schema({
       }
       return value;
     },
-  },
-  age: {
-    type: Number,
-    // required: true,
   },
   account: {
     type: String,
@@ -91,13 +86,6 @@ const userSchema = new Schema({
     _id: false,
   },
 });
-
-// userSchema.pre("save", async function (next) {
-//   if (this.isModified("password")) {
-//     this.password = await bcrypt.hash(this.password, 10);
-//   }
-//   next();
-// });
 
 // 动态设置引用的路径
 userSchema.virtual("role.userTypeRef").get(function () {
