@@ -77,32 +77,38 @@ const ReminderForBulkAdd: React.FC<ReminderForBulkAddProps> = ({
       >
         <List
           sx={{ flexGrow: 1 }}
-          className="flex flex-col justify-center items-center border-2 border-black"
+          className="flex flex-col justify-center items-center "
         >
-          <ListItem sx={{ width: "60%", border: "2px solid red" }}>
+          <ListItem sx={{ width: "60%" }}>
             <ListItemIcon>
               <Typography>1</Typography>
             </ListItemIcon>
             <ListItemText primary="Required fields: Name, Date of birth, Role, Account number, Password, Phone Number, Email" />
           </ListItem>
           <Divider />
-          <ListItem sx={{ width: "60%", border: "2px solid red" }}>
+          <ListItem sx={{ width: "60%" }}>
             <ListItemIcon>
               <Typography>2</Typography>
             </ListItemIcon>
             <ListItemText primary="Roles: student, teacher" />
           </ListItem>
-          <ListItem sx={{ width: "60%", border: "2px solid red" }}>
+          <ListItem sx={{ width: "60%" }}>
             <ListItemIcon>
               <Typography>3</Typography>
             </ListItemIcon>
             <ListItemText primary="Phone number should start with 0 or +61" />
           </ListItem>
-          <ListItem sx={{ width: "60%", border: "2px solid red" }}>
+          <ListItem sx={{ width: "60%" }}>
             <ListItemIcon>
               <Typography>4</Typography>
             </ListItemIcon>
             <ListItemText primary="Default password: 12345" />
+          </ListItem>
+          <ListItem sx={{ width: "60%" }}>
+            <ListItemIcon>
+              <Typography>5</Typography>
+            </ListItemIcon>
+            <ListItemText primary="Please don't change the table header or json fields" />
           </ListItem>
         </List>
       </Box>

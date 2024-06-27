@@ -6,6 +6,7 @@ import usersDataReducer from "./usersData";
 import authReducer from "./authSlice";
 import selectedUsersIdsReducer from "./selectedUsersIds";
 import selectedUserInfoReducer from "./selectedUserInfo";
+import reminderReducer from "./reminder";
 
 // 配置 store
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     auth: authReducer,
     selectedUsersIds: selectedUsersIdsReducer,
     selectedUserInfo: selectedUserInfoReducer,
+    reminder: reminderReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

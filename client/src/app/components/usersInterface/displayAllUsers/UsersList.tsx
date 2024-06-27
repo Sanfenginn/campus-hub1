@@ -23,23 +23,28 @@ const columns: GridColDef[] = [
     headerName: "Full name",
     description: "This column has a value getter and is not sortable.",
     sortable: false,
-    width: 160,
+    width: 130,
     valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
   },
   {
     field: "account",
     headerName: "Account",
-    width: 200,
+    width: 100,
+  },
+  {
+    field: "role",
+    headerName: "Role",
+    width: 100,
   },
   {
     field: "email",
     headerName: "Email",
-    width: 250,
+    width: 230,
   },
   {
     field: "phone",
     headerName: "Phone",
-    width: 200,
+    width: 140,
   },
   {
     field: "address",
@@ -82,7 +87,7 @@ const UsersList: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  console.log("selectionModel:", selectionModel);
+  // console.log("selectionModel:", selectionModel);
 
   const rows = usersData.map((user: User) => {
     const addressParts = [
@@ -107,6 +112,7 @@ const UsersList: React.FC = () => {
       phone: user.contact.phone,
       address: addressParts.join(", "),
       account: user.account,
+      role: user.role.userType,
     };
   });
 

@@ -9,6 +9,7 @@ const StudentModel = require("../models/studentModel");
 const createNewErrors = require("../utils/createNewErrors");
 const userSchema = require("../utils/joiSchema/joiUserSchema"); // 引入 Joi 验证 schema
 const bcrypt = require("bcrypt");
+const { userInfo } = require("os");
 
 // 设置 multer 存储配置
 const storage = multer.diskStorage({
@@ -81,12 +82,50 @@ const parseCSVAndInsert = async (filePath, next) => {
       const err = createNewErrors(
         `Failed to parse CSV file: ${errorMessage}`,
         400,
-        "parseError"
+        "parseError",
+        errorMessage
       );
       return next(err);
     }
 
-    const validatedUsers = await validateUsers(parsedData.data);
+    const jsonData = parsedData.data;
+
+    const modifiedData = jsonData.map((data) => {
+      const [day, month, year] = data.dob.split("/");
+      const formattedDob = new Date(`${year}-${month}-${day}`);
+      console.log("formattedDob", formattedDob);
+
+      const user = {
+        name: {
+          firstName: data["name.firstName"],
+          lastName: data["name.lastName"],
+        },
+        dob: formattedDob,
+        account: data.account,
+        password: data.password,
+        role: {
+          userType: data["role.userType"],
+          roleInfo: data["role.roleInfo"],
+        },
+        contact: {
+          email: data["contact.email"],
+          phone: data["contact.phone"],
+        },
+        address: {
+          houseNumber: data["address.houseNumber"],
+          street: data["address.street"],
+          suburb: data["address.suburb"],
+          city: data["address.city"],
+          state: data["address.state"],
+          country: data["address.country"],
+          postalCode: data["address.postalCode"],
+        },
+      };
+      return user;
+    });
+
+    console.log("modifiedData", modifiedData);
+    const validatedUsers = await validateUsers(modifiedData);
     console.log("validatedUsers", validatedUsers);
     await insertUsersWithRoles(validatedUsers);
     return validatedUsers;
@@ -118,6 +157,8 @@ const parseJSONAndInsert = async (filePath, next) => {
 const validateUsers = async (users) => {
   const validatedUsers = [];
   for (const user of users) {
+    console.log("user", user);
+    console.log("user.dob", user.dob);
     const { error, value } = userSchema.validate(user);
     if (error) {
       throw createNewErrors(

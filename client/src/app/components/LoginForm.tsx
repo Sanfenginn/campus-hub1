@@ -20,12 +20,12 @@ const LoginForm: React.FC = () => {
     const account = formData.get("account") as string;
     const password = formData.get("password") as string;
 
-    console.log("account: ", account);
-    console.log("password ", password);
+    // console.log("account: ", account);
+    // console.log("password ", password);
 
     try {
       const response = await login(account, password);
-      console.log("response: ", response);
+      // console.log("response: ", response);
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("userRole", response.data.userRole);
       // 在登录成功后跳转到系统主界面
@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
         router.push("/students");
       }
 
-      console.log(response);
+      // console.log(response);
     } catch (err) {
       console.error(err);
     }

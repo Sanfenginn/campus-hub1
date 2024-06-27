@@ -121,7 +121,7 @@ const getAllUsers = async (req, res, next) => {
   console.log("inputValue", inputValue);
 
   try {
-    const regex = new RegExp(`^${inputValue}$`, "i"); // 'i' 表示不区分大小写
+    const regex = new RegExp(`^${inputValue.trim()}$`, "i"); // 'i' 表示不区分大小写
     // 构建查询对象
     let query = { "name.firstName": { $ne: "Admin" } };
     if (condition && inputValue) {
@@ -131,11 +131,15 @@ const getAllUsers = async (req, res, next) => {
         };
       } else if (condition === "Role") {
         query = {
-          "role.userType": inputValue,
+          "role.userType": inputValue.trim(),
+          "name.firstName": { $ne: "Admin" },
+        };
+      } else if (condition === "All Users") {
+        query = {
           "name.firstName": { $ne: "Admin" },
         };
       } else {
-        query[condition.toLowerCase()] = inputValue;
+        query[condition.toLowerCase()] = inputValue.trim();
       }
     }
 
