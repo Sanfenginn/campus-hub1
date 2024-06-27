@@ -59,10 +59,8 @@ const receiveFiles = async (req, res, next) => {
           newUsers = await parseJSONAndInsert(filePath, next);
         }
       }
-      console.log("newUsers", newUsers);
       res.formatResponse(200, "Files uploaded successfully.", newUsers);
     } catch (error) {
-      console.error("Error parsing file:", error);
       const err = createNewErrors("Failed to parse file.", 400, "uploadError");
       return next(err);
     }
@@ -70,6 +68,7 @@ const receiveFiles = async (req, res, next) => {
 };
 
 const parseCSVAndInsert = async (filePath, next) => {
+  console.log("开始解析 CSV 文件");
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const parsedData = Papa.parse(fileContent, {
@@ -89,7 +88,7 @@ const parseCSVAndInsert = async (filePath, next) => {
 
     const validatedUsers = await validateUsers(parsedData.data);
     console.log("validatedUsers", validatedUsers);
-    // await insertUsersWithRoles(validatedUsers);
+    await insertUsersWithRoles(validatedUsers);
     return validatedUsers;
   } catch (error) {
     const err = createNewErrors("Failed to parse CSV file.", 400, "parseError");
@@ -102,13 +101,10 @@ const parseJSONAndInsert = async (filePath, next) => {
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const users = JSON.parse(fileContent);
-
-    console.log("users", users);
-
-    // const validatedUsers = await validateUsers(users);
-    // await insertUsersWithRoles(validatedUsers);
-    // return validatedUsers;
-    return users;
+    const validatedUsers = await validateUsers(users);
+    await insertUsersWithRoles(validatedUsers);
+    return validatedUsers;
+    // return users;
   } catch (error) {
     const err = createNewErrors(
       "Failed to parse JSON file.",
@@ -136,102 +132,91 @@ const validateUsers = async (users) => {
   return validatedUsers;
 };
 
-// const insertUsersWithRoles = async (users, next) => {
-//   try {
-//     console.log("开始插入用户");
+const insertUsersWithRoles = async (users, next) => {
+  try {
+    // Step 1: Hash passwords and find roles
+    const usersWithHashedPasswordsAndRoles = await Promise.all(
+      users.map(async (user) => {
+        try {
+          const hashedPassword = await bcrypt.hash(user.password, 10);
+          const dob = new Date(user.dob);
+          const role = await RoleModel.findOne({
+            role: user.role.userType,
+          }).exec();
 
-//     // Step 1: Hash passwords and find roles
-//     const usersWithHashedPasswordsAndRoles = await Promise.all(
-//       users.map(async (user) => {
-//         console.log("开始处理用户数据：", user);
-//         console.log("用户密码：", user.password);
-//         console.log("密码类型：", typeof user.password);
+          return {
+            ...user,
+            password: hashedPassword,
+            role: {
+              ...user.role,
+              roleInfo: role._id,
+            },
+            dob: dob,
+          };
+        } catch (error) {
+          console.error(`处理用户 ${user.name} 时出现错误: ${error}`);
+          throw error;
+        }
+      })
+    );
 
-//         try {
-//           console.log("开始加密密码");
-//           const hashedPassword = await bcrypt.hash(user.password, 10);
-//           console.log("密码加密完成：", hashedPassword);
+    console.log(
+      "usersWithHashedPasswordsAndRoles:",
+      usersWithHashedPasswordsAndRoles
+    );
 
-//           const dob = new Date(user.dob);
-//           const role = await RoleModel.findOne({
-//             role: user.role.userType,
-//           }).exec();
+    // Step 2: Insert users with hashed passwords
+    const newUsers = await UserModel.insertMany(
+      usersWithHashedPasswordsAndRoles
+    );
 
-//           return {
-//             ...user,
-//             password: hashedPassword,
-//             role: {
-//               ...user.role,
-//               roleInfo: role._id,
-//             },
-//             dob: dob,
-//           };
-//         } catch (error) {
-//           console.error(`处理用户 ${user.name} 时出现错误: ${error}`);
-//           throw error;
-//         }
-//       })
-//     );
+    // Step 3: Create related student or teacher documents
+    const relatedDocsPromises = newUsers.map(async (user) => {
+      let relatedDoc;
+      if (user.role.userType === "teacher") {
+        relatedDoc = await TeacherModel.create({
+          name: user.name,
+          userId: user._id,
+        });
+      } else if (user.role.userType === "student") {
+        relatedDoc = await StudentModel.create({
+          name: user.name,
+          userId: user._id,
+        });
+      }
+      return relatedDoc
+        ? {
+            userId: user._id,
+            relatedDocId: relatedDoc._id,
+            roleType: user.role.userType,
+          }
+        : null;
+    });
 
-//     console.log(
-//       "usersWithHashedPasswordsAndRoles:",
-//       usersWithHashedPasswordsAndRoles
-//     );
+    const relatedDocs = (await Promise.all(relatedDocsPromises)).filter(
+      (doc) => doc !== null
+    );
 
-//     // Step 2: Insert users with hashed passwords
-//     const newUsers = await UserModel.insertMany(
-//       usersWithHashedPasswordsAndRoles
-//     );
-//     console.log("新用户已插入:", newUsers);
+    // Step 4: Update users with the related document IDs
+    const updateUsersPromises = relatedDocs.map(
+      ({ userId, relatedDocId, roleType }) =>
+        UserModel.findByIdAndUpdate(
+          userId,
+          {
+            $set: { "role.userId": relatedDocId, "role.userType": roleType },
+          },
+          { new: true }
+        )
+    );
 
-//     // Step 3: Create related student or teacher documents
-//     const relatedDocsPromises = newUsers.map(async (user) => {
-//       let relatedDoc;
-//       if (user.role.userType === "teacher") {
-//         relatedDoc = await TeacherModel.create({
-//           name: user.name,
-//           userId: user._id,
-//         });
-//       } else if (user.role.userType === "student") {
-//         relatedDoc = await StudentModel.create({
-//           name: user.name,
-//           userId: user._id,
-//         });
-//       }
-//       return relatedDoc
-//         ? {
-//             userId: user._id,
-//             relatedDocId: relatedDoc._id,
-//             roleType: user.role.userType,
-//           }
-//         : null;
-//     });
-
-//     const relatedDocs = (await Promise.all(relatedDocsPromises)).filter(
-//       (doc) => doc !== null
-//     );
-//     console.log("相关文档已创建:", relatedDocs);
-
-//     // Step 4: Update users with the related document IDs
-//     const updateUsersPromises = relatedDocs.map(
-//       ({ userId, relatedDocId, roleType }) =>
-//         UserModel.findByIdAndUpdate(
-//           userId,
-//           {
-//             $set: { "role.userId": relatedDocId, "role.userType": roleType },
-//           },
-//           { new: true }
-//         )
-//     );
-
-//     const updatedUsers = await Promise.all(updateUsersPromises);
-//     console.log("用户更新完成:", updatedUsers);
-//   } catch (error) {
-//     console.error("Error inserting users:", error);
-//     const err = createNewErrors("Failed to insert users.", 500, "insertError");
-//     return next(err);
-//   }
-// };
+    const updatedUsers = await Promise.all(updateUsersPromises);
+    console.log("用户更新完成:", updatedUsers);
+  } catch (error) {
+    console.error("Error inserting users:", error);
+    const err = createNewErrors("Failed to insert users.", 500, "insertError");
+    return next(err);
+  }
+};
 
 module.exports = {
   receiveFiles,

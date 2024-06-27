@@ -26,7 +26,7 @@ interface User {
   };
 }
 
-const postBulkUsers = async (formData) => {
+const postBulkUsers = async (formData: {}) => {
   try {
     const url = process.env.NEXT_PUBLIC_API_URL + "/upload";
     console.log("Uploading to:", url);
@@ -36,8 +36,7 @@ const postBulkUsers = async (formData) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    // console.log("Upload successful:", response.data);
-    console.log("response from receriving:", response.data.data);
+    // console.log("response from receiving:", response.data.data);
     return response.data.data;
   } catch (err) {
     console.error("Upload failed:", err);
