@@ -12,6 +12,7 @@ import ConfirmDelete from "@/app/components/usersInterface/displayAllUsers/Confi
 import { useState } from "react";
 import UserModel from "@/app/components/usersInterface/displayAllUsers/UserModel";
 import ReminderForSelection from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
+import { setReminder } from "@/app/redux/reminder";
 
 const EditUsersButtons: React.FC = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ const EditUsersButtons: React.FC = () => {
   const handleConfirmDeletion = () => {
     if (selectedUsersIds.length === 0) {
       handleReminderForSelection();
+      dispatch(setReminder("edit user no"));
       return;
     }
     handleConfirmDeletionShow();
@@ -89,10 +91,17 @@ const EditUsersButtons: React.FC = () => {
   };
 
   const handleEditUser = () => {
-    if (selectedUsersIds.length > 1 || selectedUsersIds.length === 0) {
+    if (selectedUsersIds.length > 1) {
       handleReminderForSelection();
+      dispatch(setReminder("edit user more"));
       return;
     }
+    if (selectedUsersIds.length === 0) {
+      handleReminderForSelection();
+      dispatch(setReminder("edit user no"));
+      return;
+    }
+
     handleEditUserModelShow();
   };
 

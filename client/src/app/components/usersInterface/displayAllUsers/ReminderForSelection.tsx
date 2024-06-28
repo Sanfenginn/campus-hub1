@@ -6,35 +6,30 @@ import { RootState } from "@/app/redux/store";
 type EditUsersButtonsProps = {
   show: boolean;
   handleClose: () => void;
-  isUpload: boolean;
-  isPermissionChanged: boolean;
 };
 
 const ReminderForSelection: React.FC<EditUsersButtonsProps> = ({
   show,
   handleClose,
-  isUpload,
-  isPermissionChanged,
 }) => {
-  const selectedUsersIds = useSelector(
-    (state: RootState) => state.selectedUsersIds
-  );
+  const reminder = useSelector((state: RootState) => state.reminder.reminder);
+
+  // console.log("reminder:", reminder);
 
   const getMessage = () => {
-    if (selectedUsersIds.length === 0 && !isUpload && isPermissionChanged) {
-      return "No user is selected!";
+    if (reminder === "permission settings") {
+      return "No permissions are changed!";
     }
-
-    if (selectedUsersIds.length > 1 && !isUpload && isPermissionChanged) {
-      return "Only one user can be edited at a time!";
-    }
-
-    if (isUpload && !isPermissionChanged) {
+    if (reminder === "upload files") {
       return "Please upload the files before submitting them!";
     }
 
-    if (!isPermissionChanged) {
-      return "No permissions are changed!";
+    if (reminder === "edit user no") {
+      return "No user is selected!";
+    }
+
+    if (reminder === "edit user more") {
+      return "Only one user can be edited at a time!";
     }
   };
 

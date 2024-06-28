@@ -10,6 +10,8 @@ import ReminderForBulkAdd from "@/app/components/usersInterface/bulkAddUsers/Rem
 import postBulkUsers from "@/app/api/postBulkUsers";
 import Papa from "papaparse";
 import ReminderForEdit from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
+import { setReminder } from "@/app/redux/reminder";
+import { useDispatch } from "react-redux";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -24,6 +26,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const UsersFileUpload: React.FC = () => {
+  const dispatch = useDispatch();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewContent, setPreviewContent] = useState<string[]>([]);
   const [reminderShow, setReminderShow] = useState(false);
@@ -86,7 +89,7 @@ const UsersFileUpload: React.FC = () => {
 
   const handleSubmit = () => {
     if (selectedFiles.length === 0) {
-      console.log("No files selected");
+      dispatch(setReminder("upload files"));
       setReminderNotSelected(true);
       return;
     }
@@ -199,7 +202,6 @@ const UsersFileUpload: React.FC = () => {
       <ReminderForEdit
         show={reminderNotSelected}
         handleClose={handleReminderNotSelectedClose}
-        isUpload={true}
       />
     </div>
   );
