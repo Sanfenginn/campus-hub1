@@ -8,7 +8,8 @@ import SendIcon from "@mui/icons-material/Send";
 import Tooltip from "@mui/material/Tooltip";
 import ReminderForBulkAdd from "@/app/components/usersInterface/bulkAddUsers/ReminderForBulkAddModel";
 import postBulkUsers from "@/app/api/postBulkUsers";
-import postUser from "@/app/api/postUser";
+import Papa from "papaparse";
+import ReminderForEdit from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -26,7 +27,8 @@ const UsersFileUpload: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewContent, setPreviewContent] = useState<string[]>([]);
   const [reminderShow, setReminderShow] = useState(false);
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [parsedCsvData, setParsedCsvData] = useState<string[][]>([]);
+  const [reminderNotSelected, setReminderNotSelected] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -49,6 +51,13 @@ const UsersFileUpload: React.FC = () => {
         setPreviewContent((prevContent) => {
           const newContent = [...prevContent];
           newContent[index] = content;
+
+          // 如果是CSV文件，解析内容并设置到parsedCsvData
+          if (file.type === "text/csv") {
+            const parsed = Papa.parse<string[]>(content, { header: false });
+            setParsedCsvData(parsed.data);
+          }
+
           return newContent;
         });
       };
@@ -71,9 +80,16 @@ const UsersFileUpload: React.FC = () => {
     handleReminderModelShow();
   };
 
-  console.log("isConfirmed: ", isConfirmed);
+  const handleReminderNotSelectedClose = () => {
+    setReminderNotSelected(false);
+  };
 
   const handleSubmit = () => {
+    if (selectedFiles.length === 0) {
+      console.log("No files selected");
+      setReminderNotSelected(true);
+      return;
+    }
     handleReminderForSubmit();
   };
 
@@ -96,18 +112,19 @@ const UsersFileUpload: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("selectedFiles updated: ", selectedFiles);
-  }, [selectedFiles]);
-
-  useEffect(() => {
-    console.log("previewContent updated: ", previewContent);
-  }, [previewContent]);
+  const isValidJson = (content: string) => {
+    try {
+      JSON.parse(content);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   return (
-    <div className="border-2 border-black  flex flex-col  h-full">
+    <div className="  flex flex-col  h-full">
       <Box className="flex justify-center gap-6">
-        <Tooltip title="You can Only Upload JSON files">
+        <Tooltip title="You can Only Upload CSV and JSON files">
           <Button
             component="label"
             variant="contained"
@@ -130,18 +147,59 @@ const UsersFileUpload: React.FC = () => {
           Submit
         </Button>
       </Box>
-      {previewContent.map((content, index) => (
-        <div
-          key={index}
-          className="flex-grow border-2 border-yellow-500 overflow-scroll"
-        >
-          <pre>{content}</pre>
-        </div>
-      ))}
+      {selectedFiles.map((file, index) => {
+        let content;
+
+        if (file.type === "text/csv") {
+          content = (
+            <table className="table-auto w-full">
+              <thead>
+                <tr>
+                  {parsedCsvData[0]?.map((header, i) => (
+                    <th key={i} className="px-4 py-2">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {parsedCsvData.slice(1).map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className="border px-4 py-2">
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          );
+        } else if (isValidJson(previewContent[index])) {
+          content = (
+            <pre>
+              {JSON.stringify(JSON.parse(previewContent[index]), null, 2)}
+            </pre>
+          );
+        } else {
+          content = <pre>{previewContent[index]}</pre>;
+        }
+
+        return (
+          <div key={index} className="flex-grow overflow-scroll">
+            {content}
+          </div>
+        );
+      })}
       <ReminderForBulkAdd
         show={reminderShow}
         handleClose={handleReminderModelClose}
         onConfirm={handleUpload}
+      />
+      <ReminderForEdit
+        show={reminderNotSelected}
+        handleClose={handleReminderNotSelectedClose}
+        isUpload={true}
       />
     </div>
   );

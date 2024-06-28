@@ -65,71 +65,6 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
     }
   }, [selectedUsersIds]);
 
-  console.log("userData: ", userData);
-
-  console.log("selectedUserInfo: ", selectedUserInfo);
-
-  if (selectedUserInfo) {
-    if (selectedUserInfo.role) {
-      console.log(
-        "selectedUserInfo.role.userType: ",
-        selectedUserInfo.role.userType
-      );
-    }
-    if (selectedUserInfo.name) {
-      console.log(
-        "selectedUserInfo.name.firstName: ",
-        selectedUserInfo.name.firstName
-      );
-      console.log(
-        "selectedUserInfo.name.lastName: ",
-        selectedUserInfo.name.lastName
-      );
-    }
-    console.log("selectedUserInfo.dob: ", selectedUserInfo.dob);
-    console.log("selectedUserInfo.account: ", selectedUserInfo.account);
-    if (selectedUserInfo.contact) {
-      console.log(
-        "selectedUserInfo.contact.phone: ",
-        selectedUserInfo.contact.phone
-      );
-      console.log(
-        "selectedUserInfo.contact.email: ",
-        selectedUserInfo.contact.email
-      );
-    }
-    if (selectedUserInfo.address) {
-      console.log(
-        "selectedUserInfo.address.houseNumber: ",
-        selectedUserInfo.address.houseNumber
-      );
-      console.log(
-        "selectedUserInfo.address.street: ",
-        selectedUserInfo.address.street
-      );
-      console.log(
-        "selectedUserInfo.address.suburb: ",
-        selectedUserInfo.address.suburb
-      );
-      console.log(
-        "selectedUserInfo.address.city: ",
-        selectedUserInfo.address.city
-      );
-      console.log(
-        "selectedUserInfo.address.state: ",
-        selectedUserInfo.address.state
-      );
-      console.log(
-        "selectedUserInfo.address.country: ",
-        selectedUserInfo.address.country
-      );
-      console.log(
-        "selectedUserInfo.address.postalCode: ",
-        selectedUserInfo.address.postalCode
-      );
-    }
-  }
-
   useEffect(() => {
     if (userData) {
       setRole(userData.message?.role?.userType || "");
@@ -153,7 +88,6 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
         selectedUserInfo.address?.country || "",
         selectedUserInfo.address?.postalCode || "",
       ].filter(Boolean);
-      console.log("addressArray: ", addressArray);
 
       // 如果你需要确保 houseNumber 和后续部分之间没有多余的逗号，可以这样写：
       const formattedAddress =

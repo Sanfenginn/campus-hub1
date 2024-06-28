@@ -30,10 +30,6 @@ const userSchema = Joi.object({
         then: Joi.optional(),
         otherwise: Joi.required(),
       }),
-  }).when("$isUpdate", {
-    is: true,
-    then: Joi.optional(),
-    otherwise: Joi.required(),
   }),
   dob: Joi.date()
     .messages({})
@@ -91,6 +87,11 @@ const userSchema = Joi.object({
       .pattern(/^[0-9a-fA-F]{24}$/)
       .messages({
         "string.pattern.base": `"roleInfo" must be a valid ObjectId`,
+      })
+      .when("$isUpdate", {
+        is: true,
+        then: Joi.optional(),
+        otherwise: Joi.required(),
       }),
   }).when("$isUpdate", {
     is: true,
@@ -118,10 +119,6 @@ const userSchema = Joi.object({
         then: Joi.optional(),
         otherwise: Joi.required(),
       }),
-  }).when("$isUpdate", {
-    is: true,
-    then: Joi.optional(),
-    otherwise: Joi.required(),
   }),
   address: Joi.object({
     houseNumber: Joi.string()
@@ -129,31 +126,17 @@ const userSchema = Joi.object({
         "string.base": `"houseNumber" should be a type of 'text'`,
       })
       .optional(),
-    // .when("$isUpdate", {
-    //   is: true,
-    //   then: Joi.optional(),
-    //   otherwise: Joi.required(),
-    // }),
     street: Joi.string()
       .messages({
         "string.base": `"road" should be a type of 'text'`,
       })
       .optional(),
-    // .when("$isUpdate", {
-    //   is: true,
-    //   then: Joi.optional(),
-    //   otherwise: Joi.required(),
-    // }),
     suburb: Joi.string()
       .messages({
         "string.base": `"suburb" should be a type of 'text'`,
       })
+      .allow("")
       .optional(),
-    // .when("$isUpdate", {
-    //   is: true,
-    //   then: Joi.optional(),
-    //   otherwise: Joi.required(),
-    // }),
     city: Joi.string()
       .messages({
         "string.base": `"city" should be a type of 'text'`,
@@ -164,11 +147,6 @@ const userSchema = Joi.object({
         "string.base": `"state" should be a type of 'text'`,
       })
       .optional(),
-    // .when("$isUpdate", {
-    //   is: true,
-    //   then: Joi.optional(),
-    //   otherwise: Joi.required(),
-    // }),
     country: Joi.string()
       .messages({
         "string.base": `"country" should be a type of 'text'`,
@@ -180,17 +158,7 @@ const userSchema = Joi.object({
         "string.pattern.base": `"postalCode" should be a 4 to 8 digit number`,
       })
       .optional(),
-    // .when("$isUpdate", {
-    //   is: true,
-    //   then: Joi.optional(),
-    //   otherwise: Joi.required(),
-    // }),
   }),
-  // .when("$isUpdate", {
-  //   is: true,
-  //   then: Joi.optional(),
-  //   otherwise: Joi.required(),
-  // }),
 });
 
 module.exports = userSchema;

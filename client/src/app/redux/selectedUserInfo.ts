@@ -7,7 +7,7 @@ type SelectedUserInfoState = {
     firstName: string;
     lastName: string;
   };
-  dob: Date;
+  dob: string;
   contact: {
     email: string;
     phone: string;
@@ -27,15 +27,11 @@ type SelectedUserInfoState = {
   };
 };
 
-// type SelectedUserInfoState = User[];
-
-// const initialState: SelectedUserInfoState = [];
-
 const initialState: SelectedUserInfoState = {
   _id: "",
   role: { userType: "" },
   name: { firstName: "", lastName: "" },
-  dob: new Date(),
+  dob: "",
   account: "",
   contact: { phone: "", email: "" },
   address: {

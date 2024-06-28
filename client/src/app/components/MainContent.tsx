@@ -11,8 +11,7 @@ const AddManyUsers = dynamic(
   () => import("./usersInterface/bulkAddUsers/BulkAddUsers")
 );
 const PermissionsSetting = dynamic(
-  () =>
-    import("../components/usersInterface/permissionsSetting/PermissionsSetting")
+  () => import("./usersInterface/permissionsSetting/PermissionsSetting")
 );
 const DisplayAllUsers = dynamic(
   () => import("./usersInterface/displayAllUsers/DisplayAllUsers")
@@ -24,9 +23,6 @@ const MainContent: React.FC = () => {
     (state: RootState) => state.secondFunction.secondFunction
   );
   const userRole = localStorage.getItem("userRole");
-
-  console.log("secondFunctionFromRedux: ", secondFunction);
-  console.log("secondFunctionFromRedux: ", typeof secondFunction);
 
   const AdminContentComponent = () => {
     switch (secondFunction) {

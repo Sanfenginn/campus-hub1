@@ -33,14 +33,14 @@ const SideBar: React.FC = () => {
     if (currentPage === "users") {
       setOptions([
         { name: "User Search", path: "/users/user-search" },
-        { name: "Bulk Import and Export", path: "/users/add-many" },
+        { name: "Bulk Import", path: "/users/add-many" },
         { name: "Permission Settings", path: "/users/permissions" },
       ]);
     } else if (currentPage === "courses") {
       setOptions([
         { name: "Course Search", path: "/courses/course-search" },
         { name: "Add Course", path: "/courses/add-course" },
-        { name: "Bulk Import and Export", path: "/courses/add-many" },
+        { name: "Bulk Import", path: "/courses/add-many" },
         { name: "Course Settings", path: "/courses/course-settings" },
       ]);
     } else if (currentPage === "classes") {

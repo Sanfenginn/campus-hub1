@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       (error) => {
         if (error.response && error.response.status === 401) {
           dispatch(logout());
-          router.push("/login");
+          router.push("/");
         }
         return Promise.reject(error);
       }

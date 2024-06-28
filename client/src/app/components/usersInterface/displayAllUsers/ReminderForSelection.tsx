@@ -1,4 +1,3 @@
-import * as React from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useSelector } from "react-redux";
@@ -7,25 +6,35 @@ import { RootState } from "@/app/redux/store";
 type EditUsersButtonsProps = {
   show: boolean;
   handleClose: () => void;
+  isUpload: boolean;
+  isPermissionChanged: boolean;
 };
 
-const ReminderForEdit: React.FC<EditUsersButtonsProps> = ({
+const ReminderForSelection: React.FC<EditUsersButtonsProps> = ({
   show,
   handleClose,
+  isUpload,
+  isPermissionChanged,
 }) => {
-  console.log("show:", show);
-
   const selectedUsersIds = useSelector(
     (state: RootState) => state.selectedUsersIds
   );
 
   const getMessage = () => {
-    if (selectedUsersIds.length === 0) {
+    if (selectedUsersIds.length === 0 && !isUpload && isPermissionChanged) {
       return "No user is selected!";
     }
 
-    if (selectedUsersIds.length > 1) {
+    if (selectedUsersIds.length > 1 && !isUpload && isPermissionChanged) {
       return "Only one user can be edited at a time!";
+    }
+
+    if (isUpload && !isPermissionChanged) {
+      return "Please upload the files before submitting them!";
+    }
+
+    if (!isPermissionChanged) {
+      return "No permissions are changed!";
     }
   };
 
@@ -50,4 +59,4 @@ const ReminderForEdit: React.FC<EditUsersButtonsProps> = ({
   );
 };
 
-export default ReminderForEdit;
+export default ReminderForSelection;
