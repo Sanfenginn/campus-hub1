@@ -178,16 +178,6 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
     fetchAddress();
   }, [address]);
 
-  console.log("firstName:", firstName);
-  console.log("lastName:", lastName);
-  console.log("dob:", dob);
-  console.log("accountNumber:", accountNumber);
-  console.log("role:", role);
-  console.log("phoneNumber:", phoneNumber);
-  console.log("email:", email);
-  console.log("address:", address);
-  console.log("addressDetails:", addressDetails);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

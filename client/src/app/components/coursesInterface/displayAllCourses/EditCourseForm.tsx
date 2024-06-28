@@ -1,11 +1,12 @@
 import { TextField, Box, Typography, Paper } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
 import getCourses from "@/app/api/getCourses";
 import { setCoursesData } from "@/app/redux/coursesData";
 import putCourse from "@/app/api/putCourse";
 import { RootState } from "@/app/redux/store";
+import getCourseDataById from "@/app/api/getCourseDataById";
 
 interface NewAddCoursesFormProps {
   handleClose: () => void;
@@ -17,12 +18,42 @@ const NewAddCoursesForm: React.FC<NewAddCoursesFormProps> = ({
   const dispatch = useDispatch();
   const [courseName, setCourseName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [selectedDataIds, setSelectedDataIds] = useState<string[]>([]);
+  const [coursesData, setCoursesData] = useState<string[]>([]);
 
   const selectedDataInfo = useSelector(
     (state: RootState) => state.selectedDataInfo.selectedDataInfo
   );
 
+  useEffect(() => {
+    if (selectedDataInfo.length > 0) {
+      const selectedDataIds = selectedDataInfo.map((data) => data._id);
+      setSelectedDataIds(selectedDataIds);
+    }
+  }, [selectedDataInfo]);
+
+  useEffect(() => {
+    const getCoursesData = async () => {
+      try {
+        const response = await getCourseDataById(selectedDataIds[0]);
+        setCoursesData(response || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getCoursesData();
+  }, [selectedDataInfo, selectedDataIds]);
+
+  useEffect(() => {
+    if (coursesData) {
+      setCourseName(coursesData.name || "");
+      setDescription(coursesData.description || "");
+    }
+  }, [coursesData]);
+
   console.log("selectedDataInfo in NewAddCoursesForm:", selectedDataInfo);
+  console.log("selectedDataIds in NewAddCoursesForm:", selectedDataIds);
+  console.log("coursesData in NewAddCoursesForm:", coursesData);
 
   console.log("courseName:", courseName);
   console.log("description:", description);
@@ -85,7 +116,10 @@ const NewAddCoursesForm: React.FC<NewAddCoursesFormProps> = ({
             onChange={handleCourseNameChange}
             value={courseName}
             InputProps={{
-              readOnly: false,
+              readOnly: true,
+              sx: {
+                backgroundColor: "#fff9c4", // 只读时的背景颜色
+              },
             }}
           />
           <TextField

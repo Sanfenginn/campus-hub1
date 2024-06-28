@@ -60,11 +60,13 @@ const setColumns = (currentPage: string) => {
     columns = [
       { field: "name", headerName: "Course Name", width: 150 },
       { field: "instructor", headerName: "Instructor", width: 110 },
-      { field: "classRoom", headerName: "Class Room", width: 100 },
-      { field: "classWeek", headerName: "Week", width: 100 },
-      { field: "classStartTime", headerName: "Start Time", width: 100 },
-      { field: "classEndTime", headerName: "End Time", width: 100 },
-      { field: "classes", headerName: "Classes", width: 200 },
+      { field: "classroom", headerName: "Classroom", width: 100 },
+      { field: "dayOfWeek", headerName: "Week", width: 110 },
+      { field: "startDate", headerName: "Start Date", width: 100 },
+      { field: "endDate", headerName: "End Date", width: 100 },
+      { field: "startTime", headerName: "Start Time", width: 100 },
+      { field: "endTime", headerName: "End Time", width: 100 },
+      { field: "studentClasses", headerName: "Classes", width: 100 },
       {
         field: "description",
         headerName: "Description",
@@ -118,12 +120,25 @@ type Course = {
   _id: string;
   name: string;
   description: string;
-  teacher: string;
-  studentClasses: string;
-  classRoom: string;
-  classSchedule: {
-    week: string;
-    time: {
+  instructor: {
+    name: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+  studentClasses: [
+    {
+      className: string;
+    }
+  ];
+  classroom: string;
+  courseSchedule: {
+    dayOfWeek: string;
+    courseDate: {
+      startDate: string;
+      endDate: string;
+    };
+    courseTime: {
       startTime: string;
       endTime: string;
     };
@@ -169,17 +184,24 @@ const UsersList: React.FC = () => {
     });
   } else if (currentPage === "courses") {
     rows = coursesData.map((course: Course) => {
+      const instructorFirstName = course?.instructor?.name?.firstName || "";
+      const instructorLastName = course?.instructor?.name?.lastName || "";
+      const instructorName = `${instructorFirstName} ${instructorLastName}`;
+
       return {
         id: course._id,
         name: course.name,
         description: course.description,
-        instructor: course?.teacher || "",
-        classes: course?.studentClasses || "",
-        classRoom: course?.classRoom || "",
-        classSchedule: course?.classSchedule || "",
-        classWeek: course?.classSchedule?.week || "",
-        classStartTime: course?.classSchedule?.time?.startTime || "",
-        classEndTime: course?.classSchedule?.time?.endTime || "",
+        instructor: instructorName,
+        studentClasses: course?.studentClasses[0]?.className || "",
+        classroom: course?.classroom || "",
+        dayOfWeek: course?.courseSchedule?.dayOfWeek || "",
+        startDate:
+          course?.courseSchedule?.courseDate?.startDate.split("T")[0] || "",
+        endDate:
+          course?.courseSchedule?.courseDate?.endDate.split("T")[0] || "",
+        startTime: course?.courseSchedule?.courseTime?.startTime || "",
+        endTime: course?.courseSchedule?.courseTime?.endTime || "",
       };
     });
   }

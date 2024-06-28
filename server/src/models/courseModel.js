@@ -10,16 +10,16 @@ const courseSchema = new Schema({
     type: String,
     requires: true,
   },
-  classRoom: {
+  classroom: {
     type: String,
     requires: true,
   },
-  classSchedule: {
-    week: {
+  courseSchedule: {
+    dayOfWeek: {
       type: String,
       requires: true,
     },
-    time: {
+    courseTime: {
       startTime: {
         type: String,
         requires: true,
@@ -30,17 +30,27 @@ const courseSchema = new Schema({
       },
       _id: false,
     },
+    courseDate: {
+      startDate: {
+        type: Date,
+        requires: true,
+      },
+      endDate: {
+        type: Date,
+        requires: true,
+      },
+      _id: false,
+    },
     _id: false,
   },
-  teacher: {
+  instructor: {
     type: Schema.Types.ObjectId,
-    _id: false,
+    ref: "Teacher",
   },
   studentClasses: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Class",
-      _id: false,
+      ref: "StudentClass",
     },
   ],
 });

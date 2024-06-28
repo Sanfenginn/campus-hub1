@@ -1,11 +1,42 @@
 const createNewErrors = require("../utils/createNewErrors");
 const CourseModel = require("../models/courseModel");
 const checkResource = require("../utils/checkResource");
+const TeacherModel = require("../models/teacherModel");
+const StudentClassesModel = require("../models/studentClassModel");
 
 const addCourse = async (req, res, next) => {
   const courses = req.body;
   try {
     const newCourses = await CourseModel.insertMany(courses);
+    console.log("newCourses", newCourses);
+
+    const teacherUpdate = newCourses.map((course) => {
+      return TeacherModel.findByIdAndUpdate(
+        course.instructor,
+        { $addToSet: { courses: [course._id] } },
+        { new: true }
+      );
+    });
+
+    const studentClassesUpdate = newCourses.flatMap((course) => {
+      return course.studentClasses.map((item) => {
+        return StudentClassesModel.findByIdAndUpdate(
+          item,
+          { $addToSet: { courses: [course._id] } },
+          { new: true }
+        );
+      });
+    });
+
+    const total = await Promise.all([
+      ...teacherUpdate,
+      ...studentClassesUpdate,
+    ]);
+
+    console.log("teacherUpdate", teacherUpdate);
+    console.log("studentClassesUpdate", studentClassesUpdate);
+    console.log("total", total);
+
     res.formatResponse(201, newCourses);
   } catch (err) {
     next(err);
@@ -73,7 +104,10 @@ const getAllCourses = async (req, res, next) => {
   console.log("query: ", query);
 
   try {
-    const allCourses = await CourseModel.find(query).exec();
+    const allCourses = await CourseModel.find(query)
+      .populate("studentClasses", "className")
+      .populate("instructor", "name")
+      .exec();
 
     if (allCourses.length === 0) {
       const err = createNewErrors("Courses not found", 404, "notFound");

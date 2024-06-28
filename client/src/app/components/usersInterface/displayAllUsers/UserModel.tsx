@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import NewAddUserForm from "./NewAddUserForm";
 import EditAddUserForm from "./EditUserForm";
 import NewAddCoursesForm from "@/app/components/coursesInterface/displayAllCourses/AddCourseForm";
+import EditAddCoursesForm from "@/app/components/coursesInterface/displayAllCourses/EditCourseForm";
 
 interface AddUserProps {
   show: boolean;
@@ -32,6 +33,11 @@ const UserModel: React.FC<AddUserProps> = ({
   isEditUser,
 }) => {
   const currentPage = localStorage.getItem("currentPage");
+  console.log("UserModel rendered");
+  console.log("currentPage:", currentPage);
+  console.log("isEditUser:", isEditUser);
+  console.log("show:", show);
+
   return (
     <Modal
       open={show}
@@ -50,8 +56,9 @@ const UserModel: React.FC<AddUserProps> = ({
         )}
         {currentPage === "courses" && (
           <>
+            {console.log("NewAddCoursesForm已加载")}
             {!isEditUser && <NewAddCoursesForm handleClose={handleCloseAdd} />}
-            {isEditUser && <NewAddCoursesForm handleClose={handleCloseEdit} />}
+            {isEditUser && <EditAddCoursesForm handleClose={handleCloseEdit} />}
           </>
         )}
       </Box>
