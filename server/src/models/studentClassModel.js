@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const Course = require("./courseModel");
 
 const studentClassSchema = new Schema({
   className: {
@@ -10,6 +11,13 @@ const studentClassSchema = new Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "Student",
+      _id: false,
+    },
+  ],
+  courses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
       _id: false,
     },
   ],

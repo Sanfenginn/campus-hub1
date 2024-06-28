@@ -1,40 +1,81 @@
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import getUsersData from "../../../api/getUsersData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useDispatch } from "react-redux";
 import { setUsersData } from "@/app/redux/usersData";
+import getCourses from "@/app/api/getCourses";
+import { setCoursesData } from "@/app/redux/coursesData";
 
 type InputBoxProps = {
-  condition: string;
+  condition?: string;
 };
+
+interface ApiResponse {
+  data: {
+    message: any[]; // 根据实际返回的数据类型调整
+  };
+}
+
+interface InputType {
+  condition?: string;
+  inputValue: string;
+}
 
 const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
   const [loading, setLoading] = useState(false);
-  condition === "" ? (condition = "All Users") : (condition = condition);
-  const [inputValue, setInputValue] = useState("");
+  const currentPage = localStorage.getItem("currentPage");
+  const [conditionInInputBox, setConditionInInputBox] = useState<string>("");
+
+  useEffect(() => {
+    let newCondition = condition;
+    if (currentPage === "users") {
+      newCondition = condition === "" ? "All Users" : condition;
+    }
+    if (currentPage === "courses") {
+      newCondition = "Course Name";
+    }
+    setConditionInInputBox(newCondition as string);
+  }, [condition, currentPage]);
+
+  const [inputValue, setInputValue] = useState<string>("");
   const dispatch = useDispatch();
 
-  // console.log("inputValue:", inputValue);
-  // console.log("condition:", condition);
-
-  const handleClick = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
 
-    const input = {
-      condition,
-      inputValue,
+    const getData = async (
+      fetchFunction: (input: InputType) => Promise<ApiResponse>,
+      input: InputType
+    ) => {
+      try {
+        const response = await fetchFunction(input);
+        if (currentPage === "users") {
+          dispatch(setUsersData(response?.data?.message ?? []));
+        } else if (currentPage === "courses") {
+          dispatch(setCoursesData(response || []));
+        }
+        console.log("response in input:", response);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    try {
-      const response = await getUsersData(input);
-      dispatch(setUsersData(response?.data?.message ?? []));
-      console.log("response in input:", response);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (currentPage === "users") {
+      const input: InputType = {
+        condition: conditionInInputBox,
+        inputValue: inputValue,
+      };
+      getData(getUsersData, input);
+    }
+
+    if (currentPage === "courses") {
+      const input: string = inputValue;
+
+      getData(getCourses, input);
     }
   };
 
@@ -43,8 +84,8 @@ const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
       <Box component="form" className="w-full" noValidate autoComplete="off">
         <TextField
           id="outlined-textarea"
-          label={`search by ${condition} `}
-          placeholder={`Type to Search by All ${condition} `}
+          label={`search by ${conditionInInputBox} `}
+          placeholder={`Type to Search by All ${conditionInInputBox} `}
           multiline
           className="w-full "
           value={inputValue}
@@ -55,7 +96,7 @@ const InputBox: React.FC<InputBoxProps> = ({ condition }) => {
         <LoadingButton
           loading={loading}
           variant="outlined"
-          onClick={handleClick}
+          onClick={handleSubmit}
         >
           Submit
         </LoadingButton>

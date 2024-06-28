@@ -39,8 +39,6 @@ const SideBar: React.FC = () => {
     } else if (currentPage === "courses") {
       setOptions([
         { name: "Course Search", path: "/courses/course-search" },
-        { name: "Add Course", path: "/courses/add-course" },
-        { name: "Bulk Import", path: "/courses/add-many" },
         { name: "Course Settings", path: "/courses/course-settings" },
       ]);
     } else if (currentPage === "classes") {
@@ -61,8 +59,6 @@ const SideBar: React.FC = () => {
           <ListItem
             key={text.name}
             disablePadding
-            // component={Link}
-            // to={text.path}
             onClick={() => {
               handleClick(text.path);
             }}

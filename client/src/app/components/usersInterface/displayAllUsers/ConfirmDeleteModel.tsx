@@ -18,6 +18,22 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
     onConfirm();
     handleClose();
   };
+  const currentPage = localStorage.getItem("currentPage");
+  console.log("currentPage:", currentPage);
+
+  let condition = "";
+  switch (currentPage) {
+    case "users":
+      condition = "users";
+      break;
+    case "courses":
+      condition = "courses";
+      break;
+    default:
+      condition = "item";
+  }
+
+  console.log("condition:", condition);
 
   return (
     <Dialog
@@ -27,7 +43,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        {"Do you want to delete the selected users?"}
+        {`Do you want to delete the selected ${condition}?`}
       </DialogTitle>
       <DialogActions>
         <Button onClick={handleClose}>No</Button>

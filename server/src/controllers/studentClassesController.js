@@ -73,6 +73,8 @@ const updateStudentClass = async (req, res, next) => {
 };
 
 const getAllStudentClasses = async (req, res, next) => {
+  // const { studentIds } = req.;
+
   try {
     const allStudentClasses = await StudentClassModel.find().exec();
 

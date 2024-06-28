@@ -18,6 +18,8 @@ import getRolePermissions from "@/app/api/getRoleWithPermissions";
 import { useEffect, useState } from "react";
 import ReminderForSelection from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
 import postRole from "@/app/api/postRoleWithPermissions";
+import { setReminder } from "@/app/redux/reminder";
+import { useDispatch } from "react-redux";
 
 function not(a: readonly string[], b: readonly string[]) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -42,6 +44,8 @@ interface Permissions {
 }
 
 const PermissionsSetting: React.FC = () => {
+  const dispatch = useDispatch();
+
   const [teacherPermissions, setTeacherPermissions] = useState<Permissions>({
     role: "",
     permissions: [],
@@ -70,7 +74,6 @@ const PermissionsSetting: React.FC = () => {
     const getRoleWithPermissions = async () => {
       try {
         const rolePermissions = await getRolePermissions();
-        // console.log("rolePermissions", rolePermissions);
 
         setTeacherPermissions(rolePermissions[1][0]);
         setStudentPermissions(rolePermissions[1][1]);
@@ -81,10 +84,6 @@ const PermissionsSetting: React.FC = () => {
     };
     getRoleWithPermissions();
   }, []);
-
-  // console.log("teacherPermissions", teacherPermissions);
-  // console.log("studentPermissions", studentPermissions);
-  // console.log("allPermissions", allPermissions);
 
   useEffect(() => {
     let optionLeft: string[] = [];
@@ -228,6 +227,7 @@ const PermissionsSetting: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!isPermissionChanged) {
+      dispatch(setReminder("permission settings"));
       handleReminderForSelectionModalShow();
       return;
     }
@@ -241,23 +241,16 @@ const PermissionsSetting: React.FC = () => {
     const roleId =
       role === "teacher" ? teacherPermissions._id : studentPermissions._id;
 
-    // console.log("selectedPermissions", selectedPermissions);
-
     const finalPermissions = {
       roleId: roleId,
       permissions: selectedPermissions,
     };
 
-    // console.log("finalPermissions", finalPermissions);
-
     try {
-      const response = await postRole(finalPermissions);
-      // console.log("response post roles", response);
+      await postRole(finalPermissions);
     } catch (err) {
       console.error(err);
     }
-
-    // console.log("submit");
   };
 
   return (
@@ -336,8 +329,6 @@ const PermissionsSetting: React.FC = () => {
       <ReminderForSelection
         show={reminderForSelectionModalShow}
         handleClose={handleReminderForSelectionModalClose}
-        isUpload={false}
-        isPermissionChanged={isPermissionChanged}
       />
     </div>
   );

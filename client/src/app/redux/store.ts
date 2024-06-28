@@ -5,8 +5,9 @@ import { thunk } from "redux-thunk"; // 导入命名导出 thunk
 import usersDataReducer from "./usersData";
 import authReducer from "./authSlice";
 import selectedUsersIdsReducer from "./selectedUsersIds";
-import selectedUserInfoReducer from "./selectedUserInfo";
+import selectedUserDataReducer from "./selectedDataInfo";
 import reminderReducer from "./reminder";
+import coursesDataReducer from "./coursesData";
 
 // 配置 store
 const store = configureStore({
@@ -15,8 +16,9 @@ const store = configureStore({
     usersData: usersDataReducer,
     auth: authReducer,
     selectedUsersIds: selectedUsersIdsReducer,
-    selectedUserInfo: selectedUserInfoReducer,
+    selectedDataInfo: selectedUserDataReducer,
     reminder: reminderReducer,
+    coursesData: coursesDataReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -81,7 +81,7 @@ const bulkDeleteUserById = async (req, res, next) => {
   try {
     const deletedUsers = await UserModel.deleteMany({
       _id: { $in: ids },
-    }).exec();
+    });
 
     checkResource(deletedUsers, "User not found", 404, "notFound", next);
 
@@ -94,6 +94,8 @@ const bulkDeleteUserById = async (req, res, next) => {
 const updateUserById = async (req, res, next) => {
   const { id } = req.params;
   const userData = req.body;
+  console.log("userData", userData);
+  console.log("id", id);
 
   try {
     // 如果存在密码字段，则加密密码
@@ -117,8 +119,6 @@ const updateUserById = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
   const { condition, inputValue } = req.query;
-  console.log("condition", condition);
-  console.log("inputValue", inputValue);
 
   try {
     const regex = new RegExp(`^${inputValue.trim()}$`, "i"); // 'i' 表示不区分大小写
@@ -143,11 +143,7 @@ const getAllUsers = async (req, res, next) => {
       }
     }
 
-    console.log("query", query);
-
     const allUsers = await UserModel.find(query).select("-password").exec();
-
-    console.log("allUsers", allUsers);
 
     if (allUsers.length === 0) {
       const err = createNewErrors("No users found", 404, "notFound");

@@ -50,8 +50,17 @@ const updateTeacherById = async (req, res, next) => {
 };
 
 const getAllTeachers = async (req, res, next) => {
+  const { teacherName } = req.query;
+  console.log("teacher", teacherName);
+
+  const regex = new RegExp(`^${teacherName}$`, "i"); // 'i' 表示不区分大小写
+
+  const query = {
+    $or: [{ "name.firstName": regex }, { "name.lastName": regex }],
+  };
+
   try {
-    const allTeachers = await TeacherModel.find().exec();
+    const allTeachers = await TeacherModel.find(query).exec();
 
     if (allTeachers.length === 0) {
       const err = createNewErrors("Teachers not found", 404, "notFound");
@@ -63,6 +72,7 @@ const getAllTeachers = async (req, res, next) => {
     next(err);
   }
 };
+
 const getTeacherById = async (req, res, next) => {
   const { id } = req.params;
 
