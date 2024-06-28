@@ -75,10 +75,6 @@ const NewAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
     setEmail(event.target.value);
   };
 
-  // const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setAddress(event.target.value);
-  // };
-
   const handleInputChange = async (
     event: React.SyntheticEvent,
     newInputValue: string
@@ -98,19 +94,6 @@ const NewAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
       setAddressDetails([]);
     }
   };
-
-  console.log("options: ", options);
-  console.log("Role: ", role);
-  console.log("Role: ", typeof role);
-  console.log("First Name: ", firstName);
-  console.log("Last Name: ", lastName);
-  console.log("DOB: ", dob);
-  console.log("DOB: ", typeof dob);
-  console.log("Account Number: ", accountNumber);
-  console.log("Password: ", password);
-  console.log("Phone Number: ", phoneNumber);
-  console.log("Email: ", email);
-  console.log("Address: ", address);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

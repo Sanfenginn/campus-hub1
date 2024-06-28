@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import NewAddUserForm from "./NewAddUserForm";
 import EditAddUserForm from "./EditUserForm";
+import NewAddCoursesForm from "@/app/components/coursesInterface/displayAllCourses/AddCourseForm";
 
 interface AddUserProps {
   show: boolean;
@@ -30,6 +31,7 @@ const UserModel: React.FC<AddUserProps> = ({
   handleCloseEdit,
   isEditUser,
 }) => {
+  const currentPage = localStorage.getItem("currentPage");
   return (
     <Modal
       open={show}
@@ -40,8 +42,18 @@ const UserModel: React.FC<AddUserProps> = ({
       sx={{ border: "2px solid yellow" }}
     >
       <Box sx={style}>
-        {!isEditUser && <NewAddUserForm handleClose={handleCloseAdd} />}
-        {isEditUser && <EditAddUserForm handleClose={handleCloseEdit} />}
+        {currentPage === "users" && (
+          <>
+            {!isEditUser && <NewAddUserForm handleClose={handleCloseAdd} />}
+            {isEditUser && <EditAddUserForm handleClose={handleCloseEdit} />}
+          </>
+        )}
+        {currentPage === "courses" && (
+          <>
+            {!isEditUser && <NewAddCoursesForm handleClose={handleCloseAdd} />}
+            {isEditUser && <NewAddCoursesForm handleClose={handleCloseEdit} />}
+          </>
+        )}
       </Box>
     </Modal>
   );

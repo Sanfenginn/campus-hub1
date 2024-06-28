@@ -19,6 +19,7 @@ const getUsersData = async (input: Input) => {
         inputValue: input.inputValue,
       },
     });
+    console.log("response in getuser data:", response);
     return response;
   } catch (err) {
     console.error(err);

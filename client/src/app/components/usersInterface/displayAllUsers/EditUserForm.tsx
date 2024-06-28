@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useState, useEffect } from "react";
 import getAddress from "../../../api/getAddress";
 import Button from "@mui/material/Button";
-import postUser from "../../../api/postUser";
+import putUser from "@/app/api/putUser";
 import getUsersData from "@/app/api/getUsersData";
 import { useSelector, useDispatch } from "react-redux";
 import { setUsersData } from "@/app/redux/usersData";
@@ -38,32 +38,37 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
   const [addressDetails, setAddressDetails] = useState<any>({});
   const [userData, setUserData] = useState<any>([]);
   const dispatch = useDispatch();
-  const [isAddressChanged, setIsAddressChanged] = useState(false);
+  const [selectedDataId, setSelectedDataId] = useState<string>("");
 
-  const selectedUserInfoArray = useSelector(
-    (state: RootState) => state.selectedUserInfo
+  const selectedDataInfo = useSelector(
+    (state: RootState) => state.selectedDataInfo.selectedDataInfo
   );
 
-  const selectedUserInfo = selectedUserInfoArray[0] || {};
+  console.log("selectedDataInfo in Edit user form:", selectedDataInfo);
 
-  const selectedUsersIds = useSelector(
-    (state: RootState) => state.selectedUsersIds
-  );
-  console.log("selectedUsersIds:", selectedUsersIds);
+  useEffect(() => {
+    if (selectedDataInfo.length > 0) {
+      const selectedDataId = selectedDataInfo.map((data) => data._id);
+      setSelectedDataId(selectedDataId[0]);
+    }
+  }, [selectedDataInfo]);
+
+  console.log("selectedDataIds in edit:", selectedDataId);
+
+  console.log("userData in edit:", userData);
 
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await getUsersDataById(selectedUsersIds[0]);
+        const response = await getUsersDataById(selectedDataId);
+        console.log("response in edit:", response);
         setUserData(response);
       } catch (err) {
         console.error(err);
       }
     };
-    if (selectedUsersIds.length > 0) {
-      getUserInfo();
-    }
-  }, [selectedUsersIds]);
+    getUserInfo();
+  }, [selectedDataInfo, selectedDataId]);
 
   useEffect(() => {
     if (userData) {
@@ -71,8 +76,8 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
       setFirstName(userData.message?.name?.firstName || "");
       setLastName(userData.message?.name?.lastName || "");
       setDob(
-        selectedUserInfo.dob
-          ? new Date(selectedUserInfo.dob).toISOString().split("T")[0]
+        userData.message?.dob
+          ? new Date(userData.message.dob).toISOString().split("T")[0]
           : ""
       );
       setAccountNumber(userData.message?.account || "");
@@ -80,34 +85,29 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
       setEmail(userData.message?.contact?.email || "");
 
       const addressArray = [
-        selectedUserInfo.address?.houseNumber || "",
-        selectedUserInfo.address?.street || "",
-        selectedUserInfo.address?.suburb || "",
-        selectedUserInfo.address?.city || "",
-        selectedUserInfo.address?.state || "",
-        selectedUserInfo.address?.country || "",
-        selectedUserInfo.address?.postalCode || "",
+        userData.message?.address?.houseNumber || "",
+        userData.message?.address?.street || "",
+        userData.message?.address?.suburb || "",
+        userData.message?.address?.city || "",
+        userData.message?.address?.state || "",
+        userData.message?.address?.country || "",
+        userData.message?.address?.postalCode || "",
       ].filter(Boolean);
 
       // 如果你需要确保 houseNumber 和后续部分之间没有多余的逗号，可以这样写：
-      const formattedAddress =
-        addressArray.length > 1
-          ? `${addressArray[0]} ${addressArray.slice(1).join(", ")}`
-          : addressArray[0];
+      let formattedAddress = "";
+      if (addressArray.length > 1) {
+        formattedAddress = `${addressArray[0]} ${addressArray
+          .slice(1)
+          .join(", ")}`;
+      } else if (addressArray.length === 1) {
+        formattedAddress = addressArray[0];
+      }
 
       setAddress(formattedAddress);
       setInputValue(formattedAddress);
     }
   }, [userData]);
-
-  console.log("role: ", role);
-  console.log("firstName: ", firstName);
-  console.log("lastName: ", lastName);
-  console.log("dob: ", dob);
-  console.log("accountNumber: ", accountNumber);
-  console.log("phoneNumber: ", phoneNumber);
-  console.log("email: ", email);
-  console.log("address: ", address);
 
   const handleRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value);
@@ -148,6 +148,7 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
     newInputValue: string
   ) => {
     setInputValue(newInputValue);
+    setAddress(newInputValue); // 同步更新 address
     if (newInputValue) {
       setAddress(""); // 清空输入框的值
       setOptions([]); // 清空选项
@@ -177,55 +178,63 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
     fetchAddress();
   }, [address]);
 
+  console.log("firstName:", firstName);
+  console.log("lastName:", lastName);
+  console.log("dob:", dob);
+  console.log("accountNumber:", accountNumber);
+  console.log("role:", role);
+  console.log("phoneNumber:", phoneNumber);
+  console.log("email:", email);
+  console.log("address:", address);
+  console.log("addressDetails:", addressDetails);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const newUser = [
-      {
-        name: {
-          firstName: firstName,
-          lastName: lastName,
-        },
-        dob: dob.split("T")[0],
-        account: accountNumber,
-        role: {
-          userType: role,
-        },
-        contact: {
-          phone: phoneNumber,
-          email: email,
-        },
-        address: {
-          houseNumber: addressDetails.housenumber
-            ? addressDetails.housenumber
-            : undefined,
-          street: addressDetails.street
-            ? addressDetails.street.charAt(0).toUpperCase() +
-              addressDetails.street.slice(1)
-            : undefined,
-          suburb: addressDetails.suburb
-            ? addressDetails.suburb.charAt(0).toUpperCase() +
-              addressDetails.suburb.slice(1)
-            : undefined,
-          city: addressDetails.city
-            ? addressDetails.city.charAt(0).toUpperCase() +
-              addressDetails.city.slice(1)
-            : undefined,
-          state: addressDetails.state
-            ? addressDetails.state.toUpperCase()
-            : undefined,
-          country: addressDetails.country
-            ? addressDetails.country.charAt(0).toUpperCase() +
-              addressDetails.country.slice(1)
-            : undefined,
-          postalCode: addressDetails.postcode
-            ? addressDetails.postcode
-            : undefined,
-        },
+    const newUser = {
+      name: {
+        firstName: firstName,
+        lastName: lastName,
       },
-    ];
+      dob: dob.split("T")[0],
+      account: accountNumber,
+      role: {
+        userType: role,
+      },
+      contact: {
+        phone: phoneNumber,
+        email: email,
+      },
+      address: {
+        houseNumber: addressDetails.housenumber
+          ? addressDetails.housenumber
+          : undefined,
+        street: addressDetails.street
+          ? addressDetails.street.charAt(0).toUpperCase() +
+            addressDetails.street.slice(1)
+          : undefined,
+        suburb: addressDetails.suburb
+          ? addressDetails.suburb.charAt(0).toUpperCase() +
+            addressDetails.suburb.slice(1)
+          : undefined,
+        city: addressDetails.city
+          ? addressDetails.city.charAt(0).toUpperCase() +
+            addressDetails.city.slice(1)
+          : undefined,
+        state: addressDetails.state
+          ? addressDetails.state.toUpperCase()
+          : undefined,
+        country: addressDetails.country
+          ? addressDetails.country.charAt(0).toUpperCase() +
+            addressDetails.country.slice(1)
+          : undefined,
+        postalCode: addressDetails.postcode
+          ? addressDetails.postcode
+          : undefined,
+      },
+    };
     try {
-      await postUser(newUser);
+      await putUser(selectedDataId, newUser);
       const response = await getUsersData({
         condition: "All Users",
         inputValue: "",
@@ -402,7 +411,6 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
                     type: "search",
                   }}
                   fullWidth
-                  // onChange={handleAddressChange}
                   value={address}
                 />
               )}

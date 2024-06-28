@@ -14,8 +14,6 @@ const ReminderForSelection: React.FC<EditUsersButtonsProps> = ({
 }) => {
   const reminder = useSelector((state: RootState) => state.reminder.reminder);
 
-  // console.log("reminder:", reminder);
-
   const getMessage = () => {
     if (reminder === "permission settings") {
       return "No permissions are changed!";
@@ -30,6 +28,14 @@ const ReminderForSelection: React.FC<EditUsersButtonsProps> = ({
 
     if (reminder === "edit user more") {
       return "Only one user can be edited at a time!";
+    }
+
+    if (reminder === "edit course more") {
+      return "Only one course can be edited at a time!";
+    }
+
+    if (reminder === "edit course no") {
+      return "No course is selected!";
     }
   };
 

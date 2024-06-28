@@ -9,10 +9,23 @@ import bulkDeleteUsers from "@/app/api/deleteUsers";
 import getUsersData from "@/app/api/getUsersData";
 import { setUsersData } from "@/app/redux/usersData";
 import ConfirmDelete from "@/app/components/usersInterface/displayAllUsers/ConfirmDeleteModel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserModel from "@/app/components/usersInterface/displayAllUsers/UserModel";
 import ReminderForSelection from "@/app/components/usersInterface/displayAllUsers/ReminderForSelection";
 import { setReminder } from "@/app/redux/reminder";
+import bulkDeleteCourses from "@/app/api/deleteCourses";
+import { setCoursesData } from "@/app/redux/coursesData";
+import getCourses from "@/app/api/getCourses";
+
+interface ApiResponse {
+  data: {
+    message: any[]; // 根据实际返回的数据类型调整
+  };
+}
+
+interface IdsType {
+  ids: string[];
+}
 
 const EditUsersButtons: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,11 +35,24 @@ const EditUsersButtons: React.FC = () => {
   const [editUserModelShow, setEditUserModelShow] = useState(false);
   const [reminderForSelectionShow, setReminderForSelectionShow] =
     useState(false);
+  const [selectedDataIds, setSelectedDataIds] = useState<string[]>([]);
 
-  const selectedUsersIds = useSelector(
-    (state: RootState) => state.selectedUsersIds
+  const currentPage = localStorage.getItem("currentPage");
+
+  const selectedDataInfo = useSelector(
+    (state: RootState) => state.selectedDataInfo.selectedDataInfo
   );
-  // console.log("selectedUsersIds:", selectedUsersIds);
+
+  console.log("selectedDataInfo in EditUsersButtons:", selectedDataInfo);
+
+  useEffect(() => {
+    if (selectedDataInfo.length > 0) {
+      const selectedDataIds = selectedDataInfo.map((data) => data._id);
+      setSelectedDataIds(selectedDataIds);
+    }
+  }, [selectedDataInfo]);
+
+  console.log("selectedDataIds in EditUsersButtons:", selectedDataIds);
 
   const handleConfirmDeletionShow = () => {
     setConfirmDeletionModelShow(true);
@@ -37,24 +63,51 @@ const EditUsersButtons: React.FC = () => {
   };
 
   const handleConfirmDeletion = () => {
-    if (selectedUsersIds.length === 0) {
-      handleReminderForSelection();
-      dispatch(setReminder("edit user no"));
-      return;
+    if (currentPage === "users") {
+      if (selectedDataInfo.length === 0) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit user no"));
+        return;
+      }
+    }
+    if (currentPage === "courses") {
+      if (selectedDataInfo.length === 0) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit course no"));
+        return;
+      }
     }
     handleConfirmDeletionShow();
   };
 
   const handleDeleteUsers = async () => {
-    try {
-      await bulkDeleteUsers(selectedUsersIds);
-      const responseAfter = await getUsersData({
-        condition: "All Users",
-        inputValue: "",
-      });
-      dispatch(setUsersData(responseAfter?.data?.message ?? []));
-    } catch (err) {
-      console.error(err);
+    const deleteData = async (
+      fetchFunction: (input: IdsType) => Promise<ApiResponse>,
+      ids: IdsType
+    ) => {
+      try {
+        await fetchFunction(ids);
+        if (currentPage === "users") {
+          const responseAfter = await getUsersData({
+            condition: "All Users",
+            inputValue: "",
+          });
+          dispatch(setUsersData(responseAfter?.data?.message ?? []));
+        } else if (currentPage === "courses") {
+          const responseAfter = await getCourses("");
+          dispatch(setCoursesData(responseAfter || []));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (currentPage === "users") {
+      deleteData(bulkDeleteUsers, selectedDataIds);
+    }
+
+    if (currentPage === "courses") {
+      deleteData(bulkDeleteCourses, selectedDataIds);
     }
   };
 
@@ -91,15 +144,30 @@ const EditUsersButtons: React.FC = () => {
   };
 
   const handleEditUser = () => {
-    if (selectedUsersIds.length > 1) {
-      handleReminderForSelection();
-      dispatch(setReminder("edit user more"));
-      return;
+    if (currentPage === "users") {
+      if (selectedDataInfo.length > 1) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit user more"));
+        return;
+      }
+      if (selectedDataInfo.length === 0) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit user no"));
+        return;
+      }
     }
-    if (selectedUsersIds.length === 0) {
-      handleReminderForSelection();
-      dispatch(setReminder("edit user no"));
-      return;
+
+    if (currentPage === "courses") {
+      if (selectedDataInfo.length > 1) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit course more"));
+        return;
+      }
+      if (selectedDataInfo.length === 0) {
+        handleReminderForSelection();
+        dispatch(setReminder("edit course no"));
+        return;
+      }
     }
 
     handleEditUserModelShow();

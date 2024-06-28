@@ -5,17 +5,36 @@ const courseSchema = new Schema({
     type: String,
     required: true,
     notEmpty: true,
-    _id: false,
   },
   description: {
     type: String,
     requires: true,
+  },
+  classRoom: {
+    type: String,
+    requires: true,
+  },
+  classSchedule: {
+    week: {
+      type: String,
+      requires: true,
+    },
+    time: {
+      startTime: {
+        type: String,
+        requires: true,
+      },
+      endTime: {
+        type: String,
+        requires: true,
+      },
+      _id: false,
+    },
     _id: false,
   },
   teacher: {
     type: Schema.Types.ObjectId,
     _id: false,
-    // requires: true,
   },
   studentClasses: [
     {

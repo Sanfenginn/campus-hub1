@@ -87,16 +87,7 @@ const userSchema = Joi.object({
       .pattern(/^[0-9a-fA-F]{24}$/)
       .messages({
         "string.pattern.base": `"roleInfo" must be a valid ObjectId`,
-      })
-      .when("$isUpdate", {
-        is: true,
-        then: Joi.optional(),
-        otherwise: Joi.required(),
       }),
-  }).when("$isUpdate", {
-    is: true,
-    then: Joi.optional(),
-    otherwise: Joi.required(),
   }),
   contact: Joi.object({
     email: Joi.string()

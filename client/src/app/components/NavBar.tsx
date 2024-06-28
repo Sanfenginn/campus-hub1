@@ -14,6 +14,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setSelectedDataInfo } from "@/app/redux/selectedDataInfo";
 
 type Page = {
   name: string;
@@ -21,6 +23,7 @@ type Page = {
 };
 
 const NavBar: React.FC = () => {
+  const dispatch = useDispatch();
   const [pages, setPages] = useState<Page[]>([]);
   const settings = ["Profile", "Change Password", "Logout"];
   const router = useRouter();
@@ -62,6 +65,7 @@ const NavBar: React.FC = () => {
   const handleLogOut = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("userRole");
+    localStorage.setItem("currentPage", "users");
     router.push("/");
   };
 
@@ -80,18 +84,23 @@ const NavBar: React.FC = () => {
     console.log("pageName: ", pageName);
     handleCloseNavMenu();
     if (pageName === "users") {
-      router.push("/users");
       localStorage.setItem("currentPage", "users");
+      dispatch(setSelectedDataInfo([]));
+      router.push("/users");
     } else if (pageName === "courses") {
-      router.push("/courses");
       localStorage.setItem("currentPage", "courses");
+      dispatch(setSelectedDataInfo([]));
+      router.push("/courses");
     } else if (pageName === "classes") {
-      router.push("/classes");
       localStorage.setItem("currentPage", "classes");
+      dispatch(setSelectedDataInfo([]));
+      router.push("/classes");
     } else if (pageName === "My Courses") {
       if (userRole === "teacher") {
+        dispatch(setSelectedDataInfo([]));
         router.push("/teachers");
       } else if (userRole === "student") {
+        dispatch(setSelectedDataInfo([]));
         router.push("/students");
       }
       localStorage.setItem("currentPage", "my-courses");
