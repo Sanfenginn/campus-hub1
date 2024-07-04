@@ -94,7 +94,7 @@ const EditAddUserForm: React.FC<NewAddUserFormProps> = ({ handleClose }) => {
         userData.message?.address?.postalCode || "",
       ].filter(Boolean);
 
-      // 如果你需要确保 houseNumber 和后续部分之间没有多余的逗号，可以这样写：
+      // 需要确保 houseNumber 和后续部分之间没有多余的逗号，可以这样写：
       let formattedAddress = "";
       if (addressArray.length > 1) {
         formattedAddress = `${addressArray[0]} ${addressArray

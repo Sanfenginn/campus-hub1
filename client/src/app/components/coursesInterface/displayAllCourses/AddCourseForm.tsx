@@ -28,12 +28,13 @@ interface NewAddCoursesFormProps {
   handleClose: () => void;
 }
 
-type Courses = [
+type Course = [
   {
     name: string;
     description: string;
   }
 ];
+type Courses = Course[];
 
 const NewAddCoursesForm: React.FC<NewAddCoursesFormProps> = ({
   handleClose,
